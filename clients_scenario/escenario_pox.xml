@@ -34,7 +34,7 @@ SPAIN
   
   <!--<net name="s1" mode="openvswitch" hwaddr="82:d7:6f:b0:6d:48" controller="tcp:127.0.0.1:6653" of_version="OpenFlow13" />
   <net name="s2" mode="openvswitch" hwaddr="82:d7:6f:b0:6d:49" />-->
-  <net name="s1" mode="virtual_bridge" external="usbeth9" />
+  <net name="s1" mode="openvswitch" external="usbeth9" />
   <net name="s2" mode="openvswitch" external="usbeth10" />
   <net name="s3" mode="openvswitch" controller="tcp:10.0.2.30:6633">
     <connection name='s3-s2' net='s2'/>
@@ -113,8 +113,7 @@ SPAIN
     <filetree seq="on_boot" root="/etc/network/">conf/SubInterfaces/test/interfaces</filetree>
     <filetree seq="on_boot" root="/etc/default/">conf/DHCPRelay/test/isc-dhcp-relay</filetree>
     <filetree seq="on_boot" root="/home/cloudtrust/NAT/">conf/NAT/nat_test.sh</filetree>
-    <filetree seq="on_boot" root="/root/floodlight-java8/">../floodlight-java8/</filetree>
-    <filetree seq="on_boot" root="/root/ManagementLayer/">../ManagementLayer/</filetree>
+
 
     <exec seq="start-all" type="verbatim" ostype="system">
         bash /home/cloudtrust/NAT/nat_test.sh;
@@ -127,13 +126,8 @@ SPAIN
 	ip addr add 10.0.2.30/24 dev vlan200
 	ifconfig vlan200 up
 	iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
-	cd /root/floodlight-java8
-	ant
-	#nohup java -jar /root/floodlight-java8/target/floodlight.jar &amp;
 	cd /root/pox
 	nohup /root/pox/pox.py  pox.forwarding.l2_learning openflow.of_01 --address=10.0.2.30 --port=6633 &amp;
-	sleep 5 
-	#nohup python /root/ManagementLayer/boot.py &amp;
 	service dnsmasq stop
 	ip r add default via 10.0.10.1 dev eth1
 
@@ -157,7 +151,7 @@ SPAIN
     <exec seq="start-all" type="verbatim" ostype="system">
         bash /home/cloudtrust/NAT/nat_test.sh;
 	vconfig add eth2 10
-	ip addr add 10.0.1.31/24 dev eth2.10
+	ip addr add 10.0.1.155/24 dev eth2.10
 	ifconfig eth2.10 up
 	<!-- Metidos en el filesystem directamente
 	apt-get update -y
