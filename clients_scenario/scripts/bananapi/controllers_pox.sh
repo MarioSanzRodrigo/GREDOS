@@ -6,8 +6,8 @@ if [ $? -eq 0 ]; then
   #echo Connection
   /usr/local/bin/ovs-vsctl show | grep tcp:$1:6633 > /dev/null
   if [ $? -eq 1 ]; then
-    #Remote floodlight
-    /usr/local/bin/ovs-vsctl set-controller br0 tcp:$1:6653
+    #Remote Pox
+    /usr/local/bin/ovs-vsctl set-controller br0 tcp:$1:6633
   fi
 else
   #echo ‘No connection’
@@ -19,4 +19,3 @@ else
 fi
     sleep 25
 done
-
