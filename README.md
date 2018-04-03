@@ -39,6 +39,10 @@ These scenarios deploy residential network architecture based on SDN and NFV. Th
 
  ## Usage
 
+In order to run an scenario you must follow this commands:
+ - Create an scenario `sudo vnx -f file.xml -v -t`
+ - Destroy an scenario `sudo vnx -f file.xml -v --destroy`
+ 
 ## Author
 
 This project has been developed by [Carlos Vega García](https://es.linkedin.com/in/carlos-vega-garc%C3%ADa-449795150).
