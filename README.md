@@ -1,4 +1,4 @@
-# GREDOS Project
+# GREDOS Project scenarios
 ***
 
 This repository develop several scenarios to deploy GREDOS project using [Virtual Networks over linuX (VNX)](http://www.dit.upm.es/~vnx/).
