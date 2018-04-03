@@ -1,0 +1,18 @@
+#
+# DHCPServer dhcp server configuration 
+#
+
+ddns-update-style none;
+default-lease-time 600;
+max-lease-time 600;
+
+subnet 172.16.1.0 netmask 255.255.255.0 {
+}
+
+subnet 10.0.0.0 netmask 255.255.255.0 {
+  range 10.0.0.10 10.0.0.50;
+  option routers 10.0.0.1;
+  option domain-name-servers 8.8.8.8;
+  option domain-name "dominio1.org";
+}
+

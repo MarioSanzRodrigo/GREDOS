@@ -1,0 +1,39 @@
+#!/bin/sh -e
+#exit 0
+loadkeys es
+/etc/init.d/dnsmasq stop
+/usr/local/share/openvswitch/scripts/ovs-ctl start
+
+echo 1 > /proc/sys/net/ipv4/ip_forward
+/usr/local/share/openvswitch/scripts/ovs-ctl status
+/usr/local/bin/ovs-vsctl --may-exist add-br br0
+
+#Floodlight
+/usr/local/bin/ovs-vsctl set-controller br0 tcp:controllerIP:6653
+
+#interfaces
+ifconfig br0 up
+vconfig add eth1 OFVlanID
+ifconfig eth1.OFVlanID mtu 1400
+ifconfig eth1 up
+ifconfig eth1.OFVlanID up
+ifconfig eth2 up
+ip addr add OFIP/24 dev eth1.200
+/usr/local/bin/ovs-vsctl --may-exist add-port br0 wlan0
+/usr/local/bin/ovs-vsctl --may-exist add-port br0 eth1
+/usr/local/bin/ovs-vsctl --may-exist add-port br0 eth2
+echo ifconfig >> /var/log/network.log
+
+ifconfig br0 br0IP/24 up
+route add default gw gwIP
+
+#Controller bk
+/root/pox/pox.py  pox.forwarding.l2_learning openflow.of_01 --address=br0IP --port=6633 &
+
+#Hostapd
+service hostapd stop
+service hostapd restart
+
+#Controllers bk script
+/root/controllers_fl.sh controllerIP br0IP &
+

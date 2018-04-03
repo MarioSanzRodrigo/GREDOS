@@ -1,0 +1,39 @@
+
+auto lo
+iface lo inet loopback
+
+auto eth1
+iface eth1 inet manual
+  up ifconfig eth1 0.0.0.0 up
+
+auto eth1:10
+iface eth1:10 inet static
+   address 10.0.1.254
+   netmask 255.255.255.0
+   vlan-raw-device eth1
+
+auto eth1:11
+iface eth1:11 inet static
+   address 10.0.2.254
+   netmask 255.255.255.0
+   vlan-raw-device eth1
+
+auto eth1:12
+iface eth1:12 inet static
+   address 10.0.4.254
+   netmask 255.255.255.0
+   vlan-raw-device eth1
+
+auto eth1:254
+iface eth1:254 inet static
+   address 192.168.1.254
+   netmask 255.255.255.0
+   vlan-raw-device eth1
+
+auto eth2
+iface eth2 inet static
+   address 172.16.1.254
+   netmask 255.255.255.0
+
+auto eth3
+iface eth3 inet dhcp

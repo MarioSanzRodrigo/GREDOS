@@ -1,0 +1,67 @@
+
+auto lo
+iface lo inet loopback
+
+auto vlan10
+iface vlan10 inet static
+   address 10.0.1.254
+   netmask 255.255.255.0
+   vlan_raw_device eth1
+
+auto vlan20
+iface vlan20 inet static
+   address 10.0.2.254
+   netmask 255.255.255.0
+   vlan_raw_device eth1
+
+auto vlan30
+iface vlan30 inet static
+   address 10.0.4.254
+   netmask 255.255.255.0
+   vlan_raw_device eth1
+
+auto vlan254
+iface vlan254 inet static
+   address 192.168.1.254
+   netmask 255.255.255.0
+   vlan_raw_device eth1
+
+auto vlan253
+iface vlan253 inet static
+   address 192.168.2.254
+   netmask 255.255.255.0
+   vlan_raw_device eth1
+
+auto vlan252
+iface vlan252 inet static
+   address 192.168.3.254
+   netmask 255.255.255.0
+   vlan_raw_device eth1
+
+auto eth2:1
+iface eth2:1 inet static
+   address 172.16.1.254
+   netmask 255.255.255.0
+
+auto eth2:2
+iface eth2:2 inet static
+   address 172.16.2.254
+   netmask 255.255.255.0
+
+auto eth2:3
+iface eth2:3 inet static
+   address 172.16.3.254
+   netmask 255.255.255.0
+
+auto eth1:1
+iface eth1:1 inet static
+   address 10.0.1.254
+   netmask 255.255.255.0
+
+auto eth1:2
+iface eth1:2 inet static
+   address 192.168.1.254
+   netmask 255.255.255.0
+
+auto eth3
+iface eth3 inet dhcp
