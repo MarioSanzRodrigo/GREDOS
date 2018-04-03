@@ -5,7 +5,7 @@ This repository develop several scenarios to deploy GREDOS project using [Virtua
 
 Index:
 - [Requirements](https://github.com/carlosv5/GREDOS#requirements)
-- [Scenarios](https://github.com/carlosv5/GREDOS#scenario)
+- [Scenarios](https://github.com/carlosv5/GREDOS#scenarios)
 - [Usage](https://github.com/carlosv5/GREDOS#usage)
 - [Notes](https://github.com/carlosv5/GREDOS#notes)
 - [Author](https://github.com/carlosv5/GREDOS#author)
@@ -19,7 +19,16 @@ Index:
  - Operating System: Ubuntu 14.04 / Ubuntu 16.04 / Ubuntu 17.04
  - Hard Drive: 5 GB avaible space (Filesystems size)
  - Memory: 4 GB RAM or more
+ 
+ ## Scenarios
+ 
+ - Clients scenario
+ - Openstack scenario
+
+ ## Usage
 
 ## Author
 
 This project has been developed by [Carlos Vega García](https://es.linkedin.com/in/carlos-vega-garc%C3%ADa-449795150).
+
+## References
