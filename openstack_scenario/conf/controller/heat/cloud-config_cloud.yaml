@@ -1,0 +1,15 @@
+#cloud-config
+manage_etc_hosts: true
+runcmd:
+- echo prueba > /root/fichero.txt
+#- sed -i 's/"1"/"0"/g' /etc/apt/apt.conf.d/20auto-upgrades
+- echo 'auto ens4\niface ens4 inet dhcp' | tee /etc/network/interfaces.d/ens4.cfg > /dev/null
+- ifup ens4
+- echo 'auto ens5\niface ens5 inet dhcp' | tee /etc/network/interfaces.d/ens5.cfg > /dev/null
+- ifup ens5
+- echo "SERVERS='10.1.10.155'" > /etc/default/isc-dhcp-relay
+- echo "INTERFACES='ens4 ens5'" >> /etc/default/isc-dhcp-relay
+- echo "OPTIONS=''" >> /etc/default/isc-dhcp-relay
+- service isc-dhcp-relay start
+- echo 1 > /proc/sys/net/ipv4/ip_forward
+- iptables -t nat -A POSTROUTING -o ens3 -j MASQUERADE

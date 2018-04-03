@@ -1,0 +1,16 @@
+#cloud-config
+manage_etc_hosts: true
+runcmd:
+- echo prueba > /root/fichero.txt
+#- sed -i 's/"1"/"0"/g' /etc/apt/apt.conf.d/20auto-upgrades
+- echo 'auto ens4\niface ens4 inet dhcp' | tee /etc/network/interfaces.d/ens4.cfg > /dev/null
+- ifup ens4
+#- apt-get install -y python-setuptools 
+#- apt-get install -y python-pip 
+#- pip install requests 
+#- pip install Flask
+- 'echo {\"gw_port\": 3, \"gw_mac\": \"10:10:10:10:10:10\", \"res_net_vlanid\": 10, \"default_user_mac\": \"68:eb:ae:68:eb:a1\"} > /root/floodlight-java8/residential/residential.conf'
+- cd /root/floodlight-java8; ant; nohup java -jar /root/floodlight-java8/target/floodlight.jar &
+- sleep 10
+- cd /root/ManagementLayer; nohup python boot.py &
+

@@ -1,0 +1,22 @@
+#cloud-config
+manage_etc_hosts: true
+runcmd:
+- echo prueba > /root/fichero.txt
+- echo 'auto ens4\niface ens4 inet dhcp' | tee /etc/network/interfaces.d/ens4.cfg > /dev/null
+- ifup ens4
+- vconfig add ens3 200
+- ifconfig ens3.200 up
+- vconfig add ens3 10
+- ifconfig ens3.10 up
+- cd /root/floodlight-java8; ant
+- nohup java -jar /root/floodlight-java8/target/floodlight.jar &
+- sleep 10
+- apt-get install -y python-setuptools 
+- apt-get install -y python-pip 
+- pip install requests 
+- pip install Flask
+- cd /root/ManagementLayer; nohup python boot.py &
+- echo "SERVERS='10.1.1.155'" > /etc/default/isc-dhcp-relay
+- echo "INTERFACES='vlan10 eth4'" >> /etc/default/isc-dhcp-relay
+- echo "OPTIONS=''" >> /etc/default/isc-dhcp-relay
+- service isc-dhcp-relay start

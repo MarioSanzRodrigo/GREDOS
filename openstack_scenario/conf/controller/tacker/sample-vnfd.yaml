@@ -1,0 +1,233 @@
+tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+metadata:
+    template_name: sample-tosca-vnfd-for-vnfc
+
+topology_template:
+  node_templates:
+    dhcp_vnf:
+      type: tosca.nodes.nfv.VNFC.Tacker
+      requirements:
+        - host: VDU_dhcp
+
+    controller_vnf:
+      type: tosca.nodes.nfv.VNFC.Tacker
+      requirements:
+        - host: VDU_controller
+
+    cloud_vnf:
+      type: tosca.nodes.nfv.VNFC.Tacker
+      requirements:
+        - host: VDU_cloud
+
+
+    VDU_dhcp:
+      type: tosca.nodes.nfv.VDU.Tacker
+      properties:
+        name: "Dhcp"
+        image: xenial-server-cloudimg-amd64-vnx-GREDOS
+        flavor: m1.smaller
+        mgmt_driver: noop
+        config: |
+          param0: key1
+          param1: key2
+        user_data_format: RAW
+        user_data: |
+           #cloud-config
+           manage_etc_hosts: true
+           runcmd:
+           - echo prueba > /root/fichero.txt
+           - echo "INTERFACES='ens3'" > /etc/default/isc-dhcp-server
+           - echo "ddns-update-style none;" > /etc/dhcp/dhcpd.conf
+           - echo "default-lease-time 604800;" >> /etc/dhcp/dhcpd.conf
+           - echo "max-lease-time 604800;" >> /etc/dhcp/dhcpd.conf
+           - echo "subnet 10.1.10.0 netmask 255.255.255.0 {}" >> /etc/dhcp/dhcpd.conf
+           - echo "subnet 10.0.1.0 netmask 255.255.255.0 {">> /etc/dhcp/dhcpd.conf
+           - echo "  range 10.0.1.10 10.0.1.30;">> /etc/dhcp/dhcpd.conf
+           - echo "  option routers 10.0.1.254;">> /etc/dhcp/dhcpd.conf
+           - echo "  option domain-name-servers 8.8.8.8;}">> /etc/dhcp/dhcpd.conf
+           - service isc-dhcp-server start
+           - echo 1 > /proc/sys/net/ipv4/ip_forward
+#No estoy seguro de si hace falta el ip_forward
+
+
+    VDU_controller:
+      type: tosca.nodes.nfv.VDU.Tacker
+      properties:
+        name: "Controller"
+        image: xenial-server-cloudimg-amd64-vnx-GREDOS
+        flavor: m1.smaller
+        mgmt_driver: noop
+        config: |
+          param0: key1
+          param1: key2
+        user_data_format: RAW
+        user_data: |
+           #cloud-config
+           manage_etc_hosts: true
+           runcmd:
+           - echo prueba > /root/fichero.txt
+           - echo "auto ens4\niface ens4 inet dhcp" > /etc/network/interfaces.d/ens4.cfg
+           - ifup ens4
+           - rm /root/floodlight-java8/residential/residential.conf
+           - echo -n "{\"gw_port\"=3," >> /root/floodlight-java8/residential/residential.conf
+           - echo -n "\"gw_mac\"= \"1a:1a:1a:1a:1a:1a\"," >> /root/floodlight-java8/residential/residential.conf
+           - echo -n "\"res_net_vlanid\"= 10," >> /root/floodlight-java8/residential/residential.conf
+           - echo -n "\"default_user_mac\"= \"68:eb:ae:68:eb:a1\"}" >> /root/floodlight-java8/residential/residential.conf
+           - sed -i 's/=/:/g' /root/floodlight-java8/residential/residential.conf
+           - cd /root/floodlight-java8
+           - ant
+           - nohup java -jar /root/floodlight-java8/target/floodlight.jar &
+           - sleep 10
+           - cd /root/ManagementLayer
+           - python boot.py &
+#Funciona pero falta el modulo requests, hay que revisar la imagen y ver si lo tiene o no.
+#Tambien hay que ver las conexiones porque no van.
+#Hay que parametrizarlo
+
+    VDU_cloud:
+      type: tosca.nodes.nfv.VDU.Tacker
+      properties:
+        name: "Cloud"
+        image: xenial-server-cloudimg-amd64-vnx-GREDOS
+        flavor: m1.smaller
+        mgmt_driver: noop
+        config: |
+          param0: key1
+          param1: key2
+        user_data_format: RAW
+        user_data: |
+           #cloud-config
+           manage_etc_hosts: true
+           runcmd:
+           - echo prueba > /root/fichero.txt
+           - echo "auto ens4\niface ens4 inet dhcp" > /etc/network/interfaces.d/ens4.cfg
+           - ifup ens4
+           - echo "auto ens5\niface ens5 inet dhcp" > /etc/network/interfaces.d/ens5.cfg
+           - ifup ens5
+           - echo "SERVERS='10.1.10.155'" > /etc/default/isc-dhcp-relay
+           - echo "INTERFACES='ens4 ens5'" >> /etc/default/isc-dhcp-relay
+           - echo "OPTIONS=''" >> /etc/default/isc-dhcp-relay
+           - service isc-dhcp-relay start
+           - echo 1 > /proc/sys/net/ipv4/ip_forward
+           - iptables -t nat -A POSTROUTING -o ens3 -j MASQUERADE
+#No se cual es la interfaz de Inernet, tengo que mirar lo de orden
+
+
+    CP_cloud_ext:
+      type: tosca.nodes.nfv.CP.Tacker
+      properties:
+        management: true
+        anti_spoofing_protection: false
+      requirements:
+        - virtualLink:
+            node: VL_Rnet
+        - virtualBinding:
+            node: VDU_cloud
+
+    CP_cloud:
+      type: tosca.nodes.nfv.CP.Tacker
+      properties:
+        management: true
+        mac_address: 1a:1a:1a:1a:1a:1a
+        ip_address: 10.0.1.254
+        anti_spoofing_protection: false
+      requirements:
+        - virtualLink:
+            node: VL_cloud
+        - virtualBinding:
+            node: VDU_cloud
+
+
+    CP_cloud_services:
+      type: tosca.nodes.nfv.CP.Tacker
+      properties:
+        management: true
+        anti_spoofing_protection: false
+      requirements:
+        - virtualLink:
+            node: VL_services
+        - virtualBinding:
+            node: VDU_cloud
+
+
+    CP_dhcp:
+      type: tosca.nodes.nfv.CP.Tacker
+      properties:
+        management: true
+        ip_address: 10.1.10.155
+        anti_spoofing_protection: false
+      requirements:
+        - virtualLink:
+            node: VL_services
+        - virtualBinding:
+            node: VDU_dhcp
+
+    CP_controller_ext:
+      type: tosca.nodes.nfv.CP.Tacker
+      properties:
+        management: true
+        anti_spoofing_protection: false
+      requirements:
+        - virtualLink:
+            node: VL_Rnet
+        - virtualBinding:
+            node: VDU_controller
+
+
+    CP_controller:
+      type: tosca.nodes.nfv.CP.Tacker
+      properties:
+        management: true
+        ip_address: 10.0.2.30
+        anti_spoofing_protection: false
+      requirements:
+        - virtualLink:
+            node: VL_controller
+        - virtualBinding:
+            node: VDU_controller
+
+
+    VL_cloud:
+      type: tosca.nodes.nfv.VL
+      properties:
+        network_name: vlan10
+        vendor: Tacker
+
+    VL_controller:
+      type: tosca.nodes.nfv.VL
+      properties:
+        network_name: vlan200
+        vendor: Tacker
+
+    VL_Rnet:
+      type: tosca.nodes.nfv.VL.ELAN
+      properties:
+        network_name: Rnet10
+        vendor: Tacker
+
+
+    VL_services:
+      type: tosca.nodes.nfv.VL.ELAN
+      properties:
+        network_name: services10
+        vendor: Tacker
+
+
+    FIP1:
+      type: tosca.nodes.network.FloatingIP
+      properties:
+        floating_network: ExtNet
+        floating_ip_address: 10.0.10.125
+      requirements:
+        - link:
+            node: CP_cloud_ext
+
+    FIP2:
+      type: tosca.nodes.network.FloatingIP
+      properties:
+        floating_network: ExtNet
+        floating_ip_address: 10.0.10.126
+      requirements:
+       - link:
+            node: CP_controller_ext
+

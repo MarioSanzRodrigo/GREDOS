@@ -1,0 +1,128 @@
+heat_template_version: 2017-02-24
+description: Plantilla para la creacion de la practica final
+resources:
+
+  net1:
+        type: OS::Neutron::Net
+        properties:
+            name: net1
+ 
+ 
+  subnet1:
+        type: OS::Neutron::Subnet
+        properties:
+            name: subnet1
+            allocation_pools:
+            - start: 10.1.1.40
+              end: 10.1.1.100
+            dns_nameservers: [8.8.8.8]
+            gateway_ip: 10.1.1.1
+            cidr: 10.1.1.0/24
+            network: {get_resource: net1}
+
+
+  net2:
+        type: OS::Neutron::Net
+        properties:
+            name: net2
+ 
+ 
+  subnet2:
+        type: OS::Neutron::Subnet
+        properties:
+            name: subnet2
+            allocation_pools:
+            - start: 10.1.2.40
+              end: 10.1.2.100
+            dns_nameservers: [8.8.8.8]
+            gateway_ip: 10.1.2.21
+            cidr: 10.1.2.0/24
+            network: {get_resource: net2}
+ 
+
+  r0:
+        type: OS::Neutron::Router
+        properties:
+            name: r0
+            external_gateway_info:
+                network: ExtNet
+ 
+  router0interface:
+        type: OS::Neutron::RouterInterface
+        properties:
+            router: {get_resource: r0}
+            subnet: {get_resource: subnet1}
+
+  keys:
+        type: OS::Nova::KeyPair
+        properties:
+            name: keys
+            save_private_key: true
+
+
+  security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: Security group 
+      name: open 
+      rules: 
+        - direction: egress
+          ethertype: IPv4
+        - direction: ingress
+          ethertype: IPv4
+         
+  controller:
+        type: OS::Nova::Server
+        properties:
+            name: controller
+            image: xenial-server-cloudimg-amd64-vnx-GREDOS
+            flavor: m1.smaller
+            user_data_format: RAW
+            user_data: {get_file: /root/cloud-config_controller.yaml}
+            key_name: {get_resource: keys}
+            networks:
+                - port: { get_resource: controller_port_net1 }
+                - port: { get_resource: controller_port_net2 }
+
+
+  controller_port_net1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: net1 }
+      security_groups:
+        - { get_resource: security_group }
+      fixed_ips:
+        - ip_address: 10.1.1.21
+
+  controller_port_net2:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: net2 }
+      security_groups:
+        - { get_resource: security_group }
+      fixed_ips:
+        - ip_address: 10.1.2.21
+
+  dhcp:
+        type: OS::Nova::Server
+        properties:
+            name: dhcp
+            image: xenial-server-cloudimg-amd64-vnx-GREDOS
+            flavor: m1.smaller
+            user_data_format: RAW
+            user_data: {get_file: /root/cloud-config_dhcp.yaml}
+            key_name: {get_resource: keys}
+            networks:
+                - port: { get_resource: dhcp_port }
+
+
+  dhcp_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: net2 }
+      security_groups:
+        - { get_resource: security_group }
+      fixed_ips:
+        - ip_address: 10.1.2.22
+
+

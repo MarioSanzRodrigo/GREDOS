@@ -1,0 +1,18 @@
+#!/bin/bash
+
+SCENARIO=openstack_lab-ocata_4n_classic_ovs.xml
+VERS='03'
+
+# Move to the upper directory where this script is
+cdir=$( dirname $0 )
+cd $cdir/..
+
+vnx --pack $SCENARIO \
+    --pack-version $VERS \
+    --pack-add-files \
+        00-readme.txt \
+        openstack_lab.xml \
+        openstack_lab-vms-vlan.xml \
+        bin others \
+    $1 $2 $3
+

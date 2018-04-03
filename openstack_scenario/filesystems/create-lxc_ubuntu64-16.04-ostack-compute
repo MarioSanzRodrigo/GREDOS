@@ -1,0 +1,230 @@
+#!/bin/bash
+
+#
+# Name: create-rootfs
+#
+# Description: creates a customized LXC VNX rootfs starting from a basic VNX LXC rootfs
+#
+# This file is part of VNX package.
+#
+# Authors: David Fernández (david@dit.upm.es)
+#          Raul Alvarez (raul.alvarez@centeropenmiddleware.com)
+# Copyright (C) 2016 DIT-UPM
+#           Departamento de Ingenieria de Sistemas Telematicos
+#           Universidad Politecnica de Madrid
+#           SPAIN
+#           
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+# An online copy of the licence can be found at http://www.gnu.org/copyleft/gpl.html
+#
+
+# 
+# Configuration
+#
+
+
+BASEROOTFSNAME=vnx_rootfs_lxc_ubuntu64-16.04-v025-ostack-ocata
+ROOTFSNAME=vnx_rootfs_lxc_ubuntu64-16.04-v025-openstack-compute
+ROOTFSLINKNAME="rootfs_lxc_ubuntu64-ostack-compute"
+# General tools
+# 2016-09: removed chrony as it does not work inside a controller
+PACKAGES="aptsh wget iperf traceroute telnet xterm curl ethtool bash-completion wireshark-gtk xauth crudini python-pip"
+
+
+CUSTOMIZESCRIPT=$(cat <<EOF
+
+# Remove startup scripts
+
+# Modify failsafe script to avoid delays on startup
+sed -i -e 's/.*sleep [\d]*.*/\tsleep 1/' /etc/init/failsafe.conf
+
+# Add ~/bin to root PATH
+sed -i -e '\$aPATH=\$PATH:~/bin' /root/.bashrc
+
+# Allow root login by ssh
+sed -i -e 's/^PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# Set locale to en_US. If set to es_ES a python error related to unicode strings arises when 
+# calling "openstack service create..." commands
+echo "LANG=en_US.UTF-8" > /etc/default/locale
+
+
+export DEBIAN_FRONTEND=noninteractive
+
+# Upgrade pip
+pip install --upgrade pip
+
+# Openstack basic packages
+apt -y install software-properties-common
+add-apt-repository -y cloud-archive:ocata
+apt update
+apt -y dist-upgrade
+apt -y install python-openstackclient
+
+# STEP 4: Compute service (Nova)
+#apt-get -y -o Dpkg::Options::="--force-confold" install nova-compute # sysfsutils
+apt -y install nova-compute 
+
+# STEP 5: Network service (Neutron)
+#apt-get -y -o Dpkg::Options::="--force-confold" install neutron-plugin-openvswitch-agent
+#apt -y install neutron-linuxbridge-agent
+apt -y install neutron-openvswitch-agent
+
+sed -i -e '/net\.ipv4\.conf\.all\.rp_filter/d' /etc/sysctl.conf
+sed -i -e '/net\.ipv4\.conf\.default\.rp_filter/d' /etc/sysctl.conf
+#sed -i -e '/net\.bridge\.bridge-nf-call-iptables/d' /etc/sysctl.conf
+#sed -i -e '/net\.bridge\.bridge-nf-call-ip6tables/d' /etc/sysctl.conf
+echo "# Configured by create-rootfs" >> /etc/sysctl.conf
+echo "net.ipv4.conf.all.rp_filter=0" >> /etc/sysctl.conf
+echo "net.ipv4.conf.default.rp_filter=0" >> /etc/sysctl.conf
+#echo "net.bridge.bridge-nf-call-iptables=1" >> /etc/sysctl.conf
+#echo "net.bridge.bridge-nf-call-ip6tables=1" >> /etc/sysctl.conf
+
+# Change libvirt default network (virbr0) addresses to avoid conflicts with the host
+sed -i -e 's/192\.168\.122/192\.168\.123/g' /etc/libvirt/qemu/networks/default.xml
+
+# Add commands to create /dev/kvm and /dev/net/tun devices at startup (/etc/rc.local)
+sed -i -e "/exit 0/d" /etc/rc.local
+echo "# /dev/net/tun" >> /etc/rc.local
+echo "mkdir -p /dev/net/" >> /etc/rc.local
+echo "mknod -m 666 /dev/net/tun c 10 200" >> /etc/rc.local
+echo "" >> /etc/rc.local
+echo "# /dev/kvm" >> /etc/rc.local
+echo "mknod -m 660 /dev/kvm c 10 232" >> /etc/rc.local
+echo "chown root:kvm /dev/kvm" >> /etc/rc.local
+echo "" >> /etc/rc.local
+echo "exit 0" >> /etc/rc.local
+
+EOF
+)
+
+function customize_rootfs {
+
+  echo "-----------------------------------------------------------------------"
+  echo "Customizing rootfs..."
+  echo "--"
+  #echo "$CUSTOMIZESCRIPT"
+  echo lxc-attach -n $ROOTFSNAME -P $CDIR -- bash -c "$CUSTOMIZESCRIPT" -P $CDIR
+  lxc-attach -n $ROOTFSNAME -P $CDIR -- bash -c "$CUSTOMIZESCRIPT" -P $CDIR
+
+}
+
+#
+# Do not modify under this line (or do it with care...)
+#
+
+function create_new_rootfs {
+
+
+  #clear
+
+  echo "-----------------------------------------------------------------------"
+  echo "Deleting new rootfs directory if already exists..."
+  rm -rf ${ROOTFSNAME}
+
+  # Create a tmp dir
+  TMPDIR=$( mktemp --tmpdir=. -td tmp-rootfs.XXXXXX )
+  echo "TMPDIR=$TMPDIR"
+  cd $TMPDIR
+
+  # Download base rootfs
+  echo "-----------------------------------------------------------------------"
+  echo "Downloading base rootfs..."
+  vnx_download_rootfs -r ${BASEROOTFSNAME}.tgz
+
+  mv ${BASEROOTFSNAME} ../${ROOTFSNAME}
+  rm -f ${BASEROOTFSNAME}.tgz
+  cd .. 
+  rmdir $TMPDIR
+
+  echo "--"
+  echo "Changing rootfs config file..."
+  # Change rootfs config to adapt it to the directory wher is has been downloaded
+  sed -i -e '/lxc.rootfs/d' -e '/lxc.mount/d' ${ROOTFSNAME}/config
+  echo "
+lxc.rootfs = $CDIR/${ROOTFSNAME}/rootfs
+lxc.mount = $CDIR/${ROOTFSNAME}/fstab
+" >> ${ROOTFSNAME}/config
+
+}
+
+function start_and_install_packages {
+
+  echo "-----------------------------------------------------------------------"
+  echo "Installing packages in rootfs..."
+
+  # Install packages in rootfs
+  lxc-start --daemon -n $ROOTFSNAME -f ${ROOTFSNAME}/config -P $CDIR
+  echo lxc-wait -n $ROOTFSNAME -s RUNNING -P $CDIR
+  lxc-wait -n $ROOTFSNAME -s RUNNING -P $CDIR
+  sleep 3
+  echo lxc-attach -n $ROOTFSNAME -P $CDIR -- dhclient eth0
+  lxc-attach -n $ROOTFSNAME -P $CDIR -- dhclient eth0
+  echo lxc-attach -n $ROOTFSNAME -P $CDIR -- ifconfig eth0
+  lxc-attach -n $ROOTFSNAME -P $CDIR -- ifconfig eth0
+  echo lxc-attach -n $ROOTFSNAME -P $CDIR -- ping -c 3 www.dit.upm.es
+  lxc-attach -n $ROOTFSNAME -P $CDIR -- ping -c 3 www.dit.upm.es
+  lxc-attach -n $ROOTFSNAME -P $CDIR -- apt-get update
+  lxc-attach -n $ROOTFSNAME -P $CDIR -- bash -c "DEBIAN_FRONTEND=noninteractive apt-get -y install $PACKAGES"
+
+  # Create /dev/net/tun device
+  lxc-attach -n $ROOTFSNAME -P $CDIR -- mkdir /dev/net 
+  lxc-attach -n $ROOTFSNAME -P $CDIR -- mknod /dev/net/tun c 10 200 
+  lxc-attach -n $ROOTFSNAME -P $CDIR -- chmod 666 /dev/net/tun 
+
+}
+
+function create_rootfs_tgz {
+  echo "-----------------------------------------------------------------------"
+  echo "Creating rootfs tgz file..."
+  rm -f $BASEROOTFSNAME.tgz
+  tmpfile=$(mktemp)
+  find ${ROOTFSNAME} -type s > $tmpfile 
+  #cat $tmpfile
+  size=$(du -sb --apparent-size ${ROOTFSNAME} | awk '{ total += $1 - 512; }; END { print total }')
+  size=$(( $size * 1020 / 1000 ))
+  LANG=C tar --numeric-owner -cpf - ${ROOTFSNAME} -X $tmpfile | pv -p -s $size | gzip > ${ROOTFSNAME}.tgz
+  for LINK in $ROOTFSLINKNAME; do
+    rm -f $LINK
+    ln -s ${ROOTFSNAME} $LINK
+  done
+}
+
+
+#
+# Main
+#
+echo "-----------------------------------------------------------------------"
+echo "Creating VNX LXC rootfs:"
+echo "  Base rootfs:  $BASEROOTFSNAME"
+echo "  New rootfs:   $ROOTFSNAME"
+echo "  Rootfs link:  $ROOTFSLINKNAME"
+echo "  Packages to install: $PACKAGES"
+echo "-----------------------------------------------------------------------"
+
+# move to the directory where the script is located
+CDIR=`dirname $0`
+cd $CDIR
+CDIR=$(pwd)
+
+create_new_rootfs
+start_and_install_packages 
+customize_rootfs
+lxc-stop -n $ROOTFSNAME -P $CDIR # Stop the VM
+create_rootfs_tgz
+
+echo "...done"
+echo "-----------------------------------------------------------------------"
