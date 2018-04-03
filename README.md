@@ -26,11 +26,16 @@ These scenarios deploy residential network architecture based on SDN and NFV. Th
  - Operating System: Ubuntu 14.04 / Ubuntu 16.04 / Ubuntu 17.04
  - Hard Drive: 5 GB avaible space (Filesystems size)
  - Memory: 4 GB RAM or more
+ - Banana Pi with GREDOS'S image installed and configuration
  
  ## Scenarios
  
  - Clients scenario
- - Openstack scenario
+     * Pox scenario: this scenario deploy clients and cloud side except from the Banana Pi (physical). Uses Pox as SDN controllers. Beware of interfaces connections
+      * Floodlight scenario without Banana Pi: this scenario deploy clients and cloud side and Banana Pi OVS. Uses Floodlight as SDN controllers
+      * Floodlight scenario: this scenario deploy clients and cloud side except from the Banana Pi (physical). Uses Floodlight as SDN controllers. Beware of interfaces connections
+      * Clients scenario with OpenStack: this scenario deploy clients side except from the Banana Pi (physical). Beware of interfaces connections. It must run with OpenStack scenario at the same time.
+ - Openstack scenario: this scenario deploy cloud side. Beware of interfaces connections. It must run with the previous scenario at the same time.
 
  ## Usage
 
