@@ -56,5 +56,5 @@ service hostapd stop
 service hostapd restart
 
 #Controllers bk script
-/root/controllers.sh &
+/root/controllers.sh 10.0.2.30 10.0.1.1 &
 
