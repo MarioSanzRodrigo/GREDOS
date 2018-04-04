@@ -18,7 +18,7 @@ ifconfig eth1.OFVlanID mtu 1400
 ifconfig eth1 up
 ifconfig eth1.OFVlanID up
 ifconfig eth2 up
-ip addr add OFIP/24 dev eth1.200
+ip addr add OFIP/24 dev eth1.OFVlanID
 /usr/local/bin/ovs-vsctl --may-exist add-port br0 wlan0
 /usr/local/bin/ovs-vsctl --may-exist add-port br0 eth1
 /usr/local/bin/ovs-vsctl --may-exist add-port br0 eth2
@@ -35,5 +35,4 @@ service hostapd stop
 service hostapd restart
 
 #Controllers bk script
-/root/controllers_fl.sh controllerIP br0IP &
-
+/root/controllers.sh controllerIP br0IP &

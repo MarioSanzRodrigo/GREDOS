@@ -1,0 +1,60 @@
+#!/bin/sh -e
+#Configuration Banana Pi Pox VLANs
+#exit 0
+loadkeys es
+#ifconfig eth0 mtu 1400 up
+ifconfig eth0 up
+/etc/init.d/dnsmasq stop
+/usr/local/share/openvswitch/scripts/ovs-ctl start
+#New
+#service networking restart
+/etc/network/if-pre-up.d.swconfig
+vconfig add eth0 100
+vconfig add eth0 101
+vconfig add eth0 102
+vconfig add eth0 104
+vconfig add eth0 10
+vconfig add eth0 200
+ifconfig eth0.100 up
+ifconfig eth0.101 up
+ifconfig eth0.102 up
+ifconfig eth0.104 up
+ifconfig eth0.200 mtu 1400
+
+echo 1 > /proc/sys/net/ipv4/ip_forward
+/usr/local/share/openvswitch/scripts/ovs-ctl status
+/usr/local/bin/ovs-vsctl --may-exist add-br br0 
+
+#POX
+/usr/local/bin/ovs-vsctl set-controller br0 tcp:10.0.2.30:6633
+
+#interfaces
+ifconfig br0 up
+ifconfig eth0.10 up
+ip addr add 10.0.2.87/24 dev eth0.200
+ifconfig eth0.200 up
+echo ifconfig >> /var/log/network.log
+
+#Trafic port
+/usr/local/bin/ovs-vsctl --may-exist add-port br0 eth0.10
+
+#Client ports
+/usr/local/bin/ovs-vsctl --may-exist add-port br0 eth0.100 
+/usr/local/bin/ovs-vsctl --may-exist add-port br0 eth0.101 
+/usr/local/bin/ovs-vsctl --may-exist add-port br0 eth0.102
+/usr/local/bin/ovs-vsctl --may-exist add-port br0 eth0.104
+/usr/local/bin/ovs-vsctl --may-exist add-port br0 wlan0
+
+ifconfig br0 10.0.1.1/24 up
+route add default gw 10.0.1.254
+
+#Controller bk
+/root/pox/pox.py  pox.forwarding.l2_learning openflow.of_01 --address=10.0.1.1 --port=6633 &
+
+#Hostapd
+service hostapd stop
+service hostapd restart
+
+#Controllers bk script
+/root/controllers.sh &
+

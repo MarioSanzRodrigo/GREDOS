@@ -21,7 +21,7 @@ SPAIN
   xsi:noNamespaceSchemaLocation="/usr/share/xml/vnx/vnx-2.00.xsd">
   <global>
     <version>2.0</version>
-    <scenario_name>escenario_pox</scenario_name>
+    <scenario_name>pox_scenario</scenario_name>
     <automac offset="5"/>
     <!--vm_mgmt type="none" /!-->
     <vm_mgmt type="none" />
@@ -52,7 +52,7 @@ SPAIN
     <exec seq="on_boot" type="verbatim" ostype="system">
        ifconfig eth1 down  	
     </exec>
-    <exec seq="connect-client1" type="verbatim" ostype="system">
+    <exec seq="connect-c1" type="verbatim" ostype="system">
         ifconfig eth1 up
 	dhclient eth1 
 	#Así se le da la IP al arrancar
@@ -69,7 +69,7 @@ SPAIN
     <exec seq="on_boot" type="verbatim" ostype="system">
        ifconfig eth1 down  	
     </exec>
-    <exec seq="connect-client2" type="verbatim" ostype="system">
+    <exec seq="connect-c2" type="verbatim" ostype="system">
         ifconfig eth1 up
 	dhclient eth1 
 	#Así se le da la IP al arrancar
@@ -86,7 +86,7 @@ SPAIN
     <exec seq="on_boot" type="verbatim" ostype="system">
        ifconfig eth1 down  	
     </exec>
-    <exec seq="connect-client3" type="verbatim" ostype="system">
+    <exec seq="connect-c3" type="verbatim" ostype="system">
         ifconfig eth1 up
 	dhclient eth1 
 	#Así se le da la IP al arrancar
@@ -158,7 +158,7 @@ SPAIN
 	apt-get install -y vlan build-essential ant maven python-dev default-jre dnsmasq openjdk-8-jdk
  	-->
 	echo interface=eth2.10 >> /etc/dnsmasq.conf
-	echo dhcp-range=10.0.1.10,10.0.1.25,24h >> /etc/dnsmasq.conf
+	echo dhcp-range=10.0.1.10,10.0.1.40,24h >> /etc/dnsmasq.conf
 	echo dhcp-option=3,10.0.1.254 >> /etc/dnsmasq.conf
 	echo log-queries 
         echo log-facility=/var/log/dnsmasq.log
@@ -174,10 +174,11 @@ SPAIN
     </hostif>
     <exec seq="on_boot" type="verbatim" ostype="system">
        #ovs-vsctl add-port s1 eno1;
+       ip r add 10.0.1.0/24 dev Inet via 10.0.10.11
        ip r add 10.0.2.0/24 dev Inet
        <!--Take down and up the conection interfaces to avoid problems-->
        ifconfig usbeth10 up;
-       ifconfig usbeth2 up;
+       ifconfig usbeth9 up;
        ifconfig Inet up;
     </exec>
 
