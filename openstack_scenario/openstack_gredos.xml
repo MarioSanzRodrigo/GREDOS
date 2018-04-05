@@ -30,7 +30,7 @@ Copyright (C) 2017 Departamento de Ingenieria de Sistemas Telematicos (DIT)
   xsi:noNamespaceSchemaLocation="/usr/share/xml/vnx/vnx-2.00.xsd">
   <global>
     <version>2.0</version>
-    <scenario_name>openstack_tutorial-ocata</scenario_name>
+    <scenario_name>openstack_gredos</scenario_name>
     <ssh_key>/root/.ssh/id_rsa.pub</ssh_key>
     <automac offset="0"/>
     <!--vm_mgmt type="none"/-->
