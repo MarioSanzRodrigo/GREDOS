@@ -32,8 +32,7 @@ SPAIN
     </vm_defaults>
   </global>
   
-  <!--<net name="s1" mode="openvswitch" hwaddr="82:d7:6f:b0:6d:48" controller="tcp:127.0.0.1:6653" of_version="OpenFlow13" />
-  <net name="s2" mode="openvswitch" hwaddr="82:d7:6f:b0:6d:49" />-->
+
   <net name="s1" mode="openvswitch"  controller="tcp:10.0.2.30:6653" />
   <net name="dhcp-net" mode="openvswitch" />
   <net name="Inet" mode="openvswitch"/>
@@ -118,7 +117,7 @@ SPAIN
 	ip addr add 10.0.2.30/24 dev vlan200
 	ifconfig vlan200 up
 	iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
-	<!--sudo ovs-ofctl show s1 to see WAN port and change gw_port in next line-->
+	<!--sudo ovs-ofctl show s1 in host to see WAN port and change gw_port in next line-->
 	echo {\"gw_port\": 4, \"gw_mac\": \"14:fe:b5:14:fe:b3\", \"res_net_vlanid\": 10, \"default_user_mac\": \"68:eb:ae:68:eb:a1\"} > /root/floodlight-java8/residential/residential.conf
 	cd /root/floodlight-java8
 	ant

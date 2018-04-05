@@ -14,11 +14,9 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 #interfaces
 ifconfig br0 up
 vconfig add eth1 OFVlanID
-vconfig add eth1 TVlanID
 ifconfig eth1.OFVlanID mtu 1400
 ifconfig eth1 up
 ifconfig eth1.OFVlanID up
-ifconfig eth1.TVlanID up
 ifconfig eth2 up
 ip addr add OFIP/24 dev eth1.OFVlanID
 /usr/local/bin/ovs-vsctl --may-exist add-port br0 wlan0
