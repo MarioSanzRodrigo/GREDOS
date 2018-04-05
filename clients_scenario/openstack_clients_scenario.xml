@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+~~~~~~~~~~~~~~~~~~~~
+VNX Sample scenarios
+~~~~~~~~~~~~~~~~~~~~
+
+Name:        cloudtrust
+Description: 
+This file is part of the Virtual Networks over LinuX (VNX) Project distribution. 
+(www: http://www.dit.upm.es/vnx - e-mail: vnx@dit.upm.es) 
+
+Departamento de Ingenieria de Sistemas Telematicos (DIT)
+Universidad Politecnica de Madrid
+SPAIN
+
+-->
+
+<vnx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="/usr/share/xml/vnx/vnx-2.00.xsd">
+  <global>
+    <version>2.0</version>
+    <scenario_name>Openstack_clients_scenario</scenario_name>
+    <automac offset="5"/>
+    <!--vm_mgmt type="none" /!-->
+    <vm_mgmt type="none" />
+
+    <vm_defaults>
+      <console id="0" display="no"/>
+     <console id="1" display="yes"/>
+    </vm_defaults>
+  </global>
+  
+  <net name="BananaPi" mode="openvswitch" external="usbeth9" />
+  <net name="virbr0" mode="virtual_bridge" managed="no"/>
+ 
+  <!-- END DEVICE 1 -->
+  <vm name="client1" type="lxc" subtype="" os="" arch="x86_64">
+    <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
+    <mem>512M</mem>
+    <if id="1" net="BananaPi" >
+      <mac>68:eb:ae:68:eb:a1</mac>
+    </if>
+    <exec seq="on_boot" type="verbatim" ostype="system">
+       ifconfig eth1 down  	
+    </exec>
+  </vm>
+
+  <!-- END DEVICE 2 -->
+  <vm name="client2" type="lxc" subtype="" os="" arch="x86_64">
+    <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
+    <mem>512M</mem>
+    <if id="1" net="BananaPi" >
+      <mac>68:eb:ae:68:eb:a2</mac>
+    </if>
+    <exec seq="on_boot" type="verbatim" ostype="system">
+       ifconfig eth1 down  	
+    </exec>
+  </vm>
+
+  <!-- END DEVICE 3 -->
+  <vm name="client3" type="lxc" subtype="" os="" arch="x86_64">
+    <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
+    <mem>512M</mem>
+    <if id="1" net="BananaPi" >
+      <mac>68:eb:ae:68:eb:a3</mac>
+    </if>
+    <exec seq="on_boot" type="verbatim" ostype="system">
+       ifconfig eth1 down  	
+    </exec>
+  </vm>
+
+
+<!-- HOST -->
+  <host>
+    <exec seq="on_boot" type="verbatim" ostype="system">
+       ifconfig usbeth9 up;
+       ifconfig usbeth10 up;
+    </exec>
+
+  </host>
+</vnx>
+
