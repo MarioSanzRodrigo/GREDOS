@@ -1,6 +1,7 @@
 #!/bin/bash
 controller_ip=$1
 br0_ip=$2
+TVlanID=$3
 while true
 do
 ping -c 3 $controller_ip > /dev/null
