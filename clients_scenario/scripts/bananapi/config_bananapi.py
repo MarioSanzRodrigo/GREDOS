@@ -22,6 +22,7 @@ def lauch():
 
                 if option == 1:
                         os.system('clear')
+                        TVlanID = raw_input('\n\t*Introduce the traffic VLAN ID')
                         trafficSubnet = raw_input('\n\t*Introduce the traffic subnet:')
                         OFVlanID = raw_input('\n\t*Introduce the OpenFlow VLAN ID:')
                         OFSubnet = raw_input('\n\t*Introduce the OpenFlow subnet:')
@@ -36,6 +37,7 @@ def lauch():
                         filedata = filedata.replace('OFIP', OFSubnet.split("0/24")[0]+"87")
                         filedata = filedata.replace('gwIP', trafficSubnet.split("0/24")[0]+"254")
                         filedata = filedata.replace('br0IP', trafficSubnet.split("0/24")[0]+"1" )
+                        filedata = filedata.replace('TVlanID', TVlanID)
 
                         # Write the file out again
                         with open(out_file_path, 'w') as file:

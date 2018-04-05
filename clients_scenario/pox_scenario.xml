@@ -118,6 +118,7 @@ SPAIN
     <exec seq="start-all" type="verbatim" ostype="system">
         bash /home/cloudtrust/NAT/nat_test.sh;
         ifup vlan10;
+        ip addr add 10.0.10.11/24 dev eth1
 	<!-- Metidos en el filesystem directamente
 	apt-get update -y
 	apt-get install -y vlan build-essential ant maven python-dev default-jre dnsmasq openjdk-8-jdk

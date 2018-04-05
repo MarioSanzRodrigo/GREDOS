@@ -12,9 +12,11 @@ ping -c 3 $controller_ip > /dev/null
       if [ $? -eq 0 ];then 
         #echo Conecta a pox
         /usr/local/bin/ovs-vsctl set-controller br0 tcp:$controller_ip:6633
+        /usr/local/bin/ovs-vsctl add-port br0 eth1.$TVlanID
       else
         #echo Conecta a Fl
         /usr/local/bin/ovs-vsctl set-controller br0 tcp:$controller_ip:6653
+        /usr/local/bin/ovs-vsctl add-del br0 eth1.$TVlanID
       fi
     fi
   else
@@ -32,3 +34,4 @@ done
 #Parameters 
 # $1 controller_ip
 # $2 br0_ip
+# $3 TVlanID
