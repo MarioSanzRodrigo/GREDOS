@@ -21,7 +21,7 @@ SPAIN
   xsi:noNamespaceSchemaLocation="/usr/share/xml/vnx/vnx-2.00.xsd">
   <global>
     <version>2.0</version>
-    <scenario_name>escenario_fl</scenario_name>
+    <scenario_name>floodlight_scenario</scenario_name>
     <automac offset="5"/>
     <!--vm_mgmt type="none" /!-->
     <vm_mgmt type="none" />

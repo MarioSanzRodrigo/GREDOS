@@ -21,7 +21,7 @@ SPAIN
   xsi:noNamespaceSchemaLocation="/usr/share/xml/vnx/vnx-2.00.xsd">
   <global>
     <version>2.0</version>
-    <scenario_name>escenario_fl</scenario_name>
+    <scenario_name>floodlight_all_virtual_scenario</scenario_name>
     <automac offset="5"/>
     <!--vm_mgmt type="none" /!-->
     <vm_mgmt type="none" />
@@ -49,11 +49,8 @@ SPAIN
     <exec seq="on_boot" type="verbatim" ostype="system">
        ifconfig eth1 down 	
     </exec>
-    <exec seq="connect-client1" type="verbatim" ostype="system">
+    <exec seq="up-c1" type="verbatim" ostype="system">
         ifconfig eth1 up
-	ip addr add 10.0.1.11/24 dev eth1
-        ip route add default via 10.0.1.254 
-	#Así se le da la IP al arrancar
     </exec>
   </vm>
 
@@ -67,10 +64,8 @@ SPAIN
     <exec seq="on_boot" type="verbatim" ostype="system">
        ifconfig eth1 down  	
     </exec>
-    <exec seq="connect-client2" type="verbatim" ostype="system">
+    <exec seq="up-c2" type="verbatim" ostype="system">
         ifconfig eth1 up
-	dhclient eth1 
-	#Así se le da la IP al arrancar
     </exec>
   </vm>
 
@@ -84,10 +79,8 @@ SPAIN
     <exec seq="on_boot" type="verbatim" ostype="system">
        ifconfig eth1 down  	
     </exec>
-    <exec seq="connect-client3" type="verbatim" ostype="system">
+    <exec seq="up-c3" type="verbatim" ostype="system">
         ifconfig eth1 up
-	dhclient eth1 
-	#Así se le da la IP al arrancar
     </exec>
   </vm>
 
@@ -111,13 +104,13 @@ SPAIN
     <filetree seq="on_boot" root="/etc/network/">conf/SubInterfaces/test/interfaces</filetree>
     <filetree seq="on_boot" root="/etc/default/">conf/DHCPRelay/test/isc-dhcp-relay</filetree>
     <filetree seq="on_boot" root="/home/cloudtrust/NAT/">conf/NAT/nat_test.sh</filetree>
-    <filetree seq="on_boot" root="/root/floodlight-java8/">../floodlight-java8/</filetree>
-    <filetree seq="on_boot" root="/root/ManagementLayer/">../ManagementLayer/</filetree>
+    <filetree seq="on_boot" root="/root/floodlight-java8/">other/floodlight-java8/</filetree>
+    <filetree seq="on_boot" root="/root/ManagementLayer/">other/ManagementLayer/</filetree>
 
     <exec seq="start-all" type="verbatim" ostype="system">
         bash /home/cloudtrust/NAT/nat_test.sh;
         ifup vlan10;
-	<!-- Metidos en el filesystem directamente
+	<!--filesystem 
 	apt-get update -y
 	apt-get install -y vlan build-essential ant maven python-dev default-jre dnsmasq openjdk-8-jdk
  	-->
@@ -125,11 +118,12 @@ SPAIN
 	ip addr add 10.0.2.30/24 dev vlan200
 	ifconfig vlan200 up
 	iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
+	<!--sudo ovs-ofctl show s1 to see WAN port and change gw_port in next line-->
+	echo {\"gw_port\": 4, \"gw_mac\": \"14:fe:b5:14:fe:b3\", \"res_net_vlanid\": 10, \"default_user_mac\": \"68:eb:ae:68:eb:a1\"} > /root/floodlight-java8/residential/residential.conf
 	cd /root/floodlight-java8
 	ant
 	nohup java -jar /root/floodlight-java8/target/floodlight.jar &amp;
 	sleep 10 
-	nohup /root/pox/pox.py  pox.forwarding.l2_learning openflow.of_01 --address=10.0.2.30 --port=6633 &amp;
         cd /root/ManagementLayer
 	nohup python boot.py &amp;
 	service dnsmasq stop
@@ -155,7 +149,7 @@ SPAIN
 
     <exec seq="start-all" type="verbatim" ostype="system">
         bash /home/cloudtrust/NAT/nat_test.sh;
-	<!-- Metidos en el filesystem directamente
+	<!-- filesystem 
 	apt-get update -y
 	apt-get install -y vlan build-essential ant maven python-dev default-jre dnsmasq openjdk-8-jdk
  	-->
@@ -177,7 +171,7 @@ SPAIN
 	echo "subnet 10.1.1.0 netmask 255.255.255.0 {}" >> /etc/dhcp/dhcpd.conf
 
 	echo "subnet 10.0.1.0 netmask 255.255.255.0 {">> /etc/dhcp/dhcpd.conf
-	echo "  range 10.0.1.1 10.0.1.50;">> /etc/dhcp/dhcpd.conf
+	echo "  range 10.0.1.20 10.0.1.50;">> /etc/dhcp/dhcpd.conf
 	echo "  option routers 10.0.1.254;">> /etc/dhcp/dhcpd.conf
 	echo "  option domain-name-servers 8.8.8.8;}">> /etc/dhcp/dhcpd.conf
 		service isc-dhcp-server start
@@ -194,6 +188,7 @@ SPAIN
     <exec seq="on_boot" type="verbatim" ostype="system">
        #ovs-vsctl add-port s1 eno1;
        ip r add 10.0.2.0/24 dev Inet
+       ip r add 10.0.1.0/24 dev Inet via 10.0.10.11
        <!--Take down and up the conection interfaces to avoid problems-->
        ifconfig usbeth10 up;
        ifconfig usbeth2 up;
