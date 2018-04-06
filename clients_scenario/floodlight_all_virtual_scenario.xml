@@ -103,8 +103,8 @@ SPAIN
     <filetree seq="on_boot" root="/etc/network/">conf/SubInterfaces/test/interfaces</filetree>
     <filetree seq="on_boot" root="/etc/default/">conf/DHCPRelay/test/isc-dhcp-relay</filetree>
     <filetree seq="on_boot" root="/home/cloudtrust/NAT/">conf/NAT/nat_test.sh</filetree>
-    <filetree seq="on_boot" root="/root/floodlight-java8/">other/floodlight-java8/</filetree>
-    <filetree seq="on_boot" root="/root/ManagementLayer/">other/ManagementLayer/</filetree>
+    <filetree seq="on_boot" root="/root/floodlight-java8/">../others/floodlight-java8/</filetree>
+    <filetree seq="on_boot" root="/root/ManagementLayer/">../others/ManagementLayer/</filetree>
 
     <exec seq="start-all" type="verbatim" ostype="system">
         bash /home/cloudtrust/NAT/nat_test.sh;

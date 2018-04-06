@@ -801,8 +801,8 @@ openstack network create --share --external --provider-physical-network provider
 openstack subnet create --network ExtNet --gateway 10.0.10.1 --dns-nameserver 10.0.10.1 --subnet-range 10.0.10.0/24 --allocation-pool start=10.0.10.100,end=10.0.10.200 ExtSubNet
 </exec>
 
-<filetree seq="create-img" root="/root/">others/ManagementLayer</filetree>
-<filetree seq="create-img" root="/root/">others/floodlight-java8</filetree>
+<filetree seq="create-img" root="/root/">../others/ManagementLayer</filetree>
+<filetree seq="create-img" root="/root/">../others/floodlight-java8</filetree>
 <!--<filetree seq="create-img-local" root="/tmp/images/">conf/controller/glance/Xenial-GREDOS.qcow2</filetree>-->
 
 <exec seq="create-img-local" type="verbatim">
