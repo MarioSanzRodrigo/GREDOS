@@ -47,6 +47,7 @@ topology_template:
            - echo "  option domain-name-servers 8.8.8.8;}">> /etc/dhcp/dhcpd.conf
            - service isc-dhcp-server start
            - echo 1 > /proc/sys/net/ipv4/ip_forward
+           - ip r add default dev ens3
 #No estoy seguro de si hace falta el ip_forward
 
 
