@@ -69,7 +69,7 @@ topology_template:
            - echo "auto ens4\niface ens4 inet dhcp" > /etc/network/interfaces.d/ens4.cfg
            - ifup ens4
            - rm /root/floodlight-java8/residential/residential.conf
-           - echo -n "{\"gw_port\"=3," >> /root/floodlight-java8/residential/residential.conf
+           - echo -n "{\"gw_port\"=11," >> /root/floodlight-java8/residential/residential.conf
            - echo -n "\"gw_mac\"= \"1a:1a:1a:1a:1a:1a\"," >> /root/floodlight-java8/residential/residential.conf
            - echo -n "\"res_net_vlanid\"= 10," >> /root/floodlight-java8/residential/residential.conf
            - echo -n "\"default_user_mac\"= \"68:eb:ae:68:eb:a1\"}" >> /root/floodlight-java8/residential/residential.conf
@@ -116,6 +116,7 @@ topology_template:
     CP_cloud_ext:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
+        order: 0
         management: true
         anti_spoofing_protection: false
       requirements:
@@ -127,6 +128,7 @@ topology_template:
     CP_cloud:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
+        order: 1
         management: true
         mac_address: 1a:1a:1a:1a:1a:1a
         ip_address: 10.0.1.254
@@ -141,6 +143,7 @@ topology_template:
     CP_cloud_services:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
+        order: 2
         management: true
         anti_spoofing_protection: false
       requirements:
@@ -153,6 +156,7 @@ topology_template:
     CP_dhcp:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
+        order: 0
         management: true
         ip_address: 10.1.10.155
         anti_spoofing_protection: false
@@ -165,6 +169,7 @@ topology_template:
     CP_controller_ext:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
+        order: 0
         management: true
         anti_spoofing_protection: false
       requirements:
@@ -177,6 +182,7 @@ topology_template:
     CP_controller:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
+        order: 1
         management: true
         ip_address: 10.0.2.30
         anti_spoofing_protection: false
