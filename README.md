@@ -7,7 +7,6 @@ Index:
 - [Summary](https://github.com/carlosv5/GREDOS#summary)
 - [Requirements](https://github.com/carlosv5/GREDOS#requirements)
 - [Scenarios](https://github.com/carlosv5/GREDOS#scenarios)
-- [Usage](https://github.com/carlosv5/GREDOS#usage)
 - [Notes](https://github.com/carlosv5/GREDOS#notes)
 - [Author](https://github.com/carlosv5/GREDOS#author)
 - [References](https://github.com/carlosv5/GREDOS#references)
@@ -35,12 +34,8 @@ These scenarios deploy residential network architecture based on SDN and NFV. Th
       * [Clients scenario with OpenStack](https://github.com/carlosv5/GREDOS/wiki/openstack_clients_scenario): this scenario deploy clients side except from the Banana Pi (physical). Beware of interfaces connections. It must run with OpenStack scenario at the same time.
  - [Openstack scenario](https://github.com/carlosv5/GREDOS/wiki/openstack_gredos): this scenario deploy cloud side. Beware of interfaces connections. It must run with the previous scenario at the same time.
 
- ## Usage
+## Notes
 
-In order to run an scenario you must follow this commands:
- - Create an scenario `sudo vnx -f file.xml -v -t`
- - Destroy an scenario `sudo vnx -f file.xml -v --destroy`
- 
 ## Author
 
 This project has been developed by [Carlos Vega García](https://es.linkedin.com/in/carlos-vega-garc%C3%ADa-449795150).
