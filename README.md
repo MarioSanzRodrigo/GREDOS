@@ -7,11 +7,9 @@ Index:
 - [Summary](https://github.com/carlosv5/GREDOS#summary)
 - [Requirements](https://github.com/carlosv5/GREDOS#requirements)
 - [Scenarios](https://github.com/carlosv5/GREDOS#scenarios)
-- [Usage](https://github.com/carlosv5/GREDOS#usage)
 - [Notes](https://github.com/carlosv5/GREDOS#notes)
 - [Author](https://github.com/carlosv5/GREDOS#author)
 - [References](https://github.com/carlosv5/GREDOS#references)
-
 
 
 ## Summary
@@ -25,24 +23,19 @@ These scenarios deploy residential network architecture based on SDN and NFV. Th
  - VNX installed [(VNX Installation Guide)](http://web.dit.upm.es/vnxwiki/index.php/Vnx-install)
  - Operating System: Ubuntu 14.04 / Ubuntu 16.04 / Ubuntu 17.04
  - Hard Drive: 5 GB avaible space (Filesystems size)
- - Memory: 4 GB RAM or more
- - Banana Pi with GREDOS'S image installed and configuration
+ - Memory: 8 GB RAM or more
+ - Banana Pi with GREDOS's image installed and configuration
  
  ## Scenarios
- 
  - Clients scenario
-     * Pox scenario: this scenario deploy clients and cloud side except from the Banana Pi (physical). Uses Pox as SDN controllers. Beware of interfaces connections
-      * Floodlight scenario without Banana Pi: this scenario deploy clients and cloud side and Banana Pi OVS. Uses Floodlight as SDN controllers
-      * Floodlight scenario: this scenario deploy clients and cloud side except from the Banana Pi (physical). Uses Floodlight as SDN controllers. Beware of interfaces connections
-      * Clients scenario with OpenStack: this scenario deploy clients side except from the Banana Pi (physical). Beware of interfaces connections. It must run with OpenStack scenario at the same time.
- - Openstack scenario: this scenario deploy cloud side. Beware of interfaces connections. It must run with the previous scenario at the same time.
+     * [Pox scenario](https://github.com/carlosv5/GREDOS/wiki/pox_scenario): this scenario deploy clients and cloud side except from the Banana Pi (physical). Uses Pox as SDN controllers. Beware of interfaces connections
+      * [Floodlight scenario without Banana Pi](https://github.com/carlosv5/GREDOS/wiki/floodlight_all_virtual_scenario): this scenario deploy clients and cloud side and Banana Pi OVS. Uses Floodlight as SDN controllers
+      * [Floodlight scenario](https://github.com/carlosv5/GREDOS/wiki/floodlight_scenario): this scenario deploy clients and cloud side except from the Banana Pi (physical). Uses Floodlight as SDN controllers. Beware of interfaces connections
+      * [Clients scenario with OpenStack](https://github.com/carlosv5/GREDOS/wiki/openstack_clients_scenario): this scenario deploy clients side except from the Banana Pi (physical). Beware of interfaces connections. It must run with OpenStack scenario at the same time.
+ - [Openstack scenario](https://github.com/carlosv5/GREDOS/wiki/openstack_gredos): this scenario deploy cloud side. Beware of interfaces connections. It must run with the previous scenario at the same time.
 
- ## Usage
+## Notes
 
-In order to run an scenario you must follow this commands:
- - Create an scenario `sudo vnx -f file.xml -v -t`
- - Destroy an scenario `sudo vnx -f file.xml -v --destroy`
- 
 ## Author
 
 This project has been developed by [Carlos Vega García](https://es.linkedin.com/in/carlos-vega-garc%C3%ADa-449795150).
