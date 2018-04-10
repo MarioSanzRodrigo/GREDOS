@@ -67,11 +67,12 @@ topology_template:
            #cloud-config
            manage_etc_hosts: true
            runcmd:
+           - exec 1>/var/log/tacker_script.out 2>&1
            - echo prueba > /root/fichero.txt
            - echo "auto ens4\niface ens4 inet dhcp" > /etc/network/interfaces.d/ens4.cfg
            - ifup ens4
            - rm /root/floodlight-java8/residential/residential.conf
-           - echo -n "{\"gw_port\"=11," >> /root/floodlight-java8/residential/residential.conf
+           - echo -n "{\"gw_port\"= 11," >> /root/floodlight-java8/residential/residential.conf
            - echo -n "\"gw_mac\"= \"1a:1a:1a:1a:1a:1a\"," >> /root/floodlight-java8/residential/residential.conf
            - echo -n "\"res_net_vlanid\"= 10," >> /root/floodlight-java8/residential/residential.conf
            - echo -n "\"default_user_mac\"= \"68:eb:ae:68:eb:a1\"}" >> /root/floodlight-java8/residential/residential.conf
