@@ -1,0 +1,2 @@
+cp_name: Tacker
+#Use: tacker vnf-create --vnfd-name cp2 --param-file config.yaml tack2

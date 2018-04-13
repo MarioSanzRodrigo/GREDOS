@@ -55,7 +55,7 @@ topology_template:
     VDU_controller:
       type: tosca.nodes.nfv.VDU.Tacker
       properties:
-        name: "Controller"
+        name: { get_input: cp_name }
         image: xenial-server-cloudimg-amd64-vnx-GREDOS
         flavor: m1.smaller
         mgmt_driver: noop
