@@ -1053,7 +1053,6 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
         tacker vnfd-create --vnfd-file sample-vnfd.yaml tackerd
 	tacker vnf-create --vnfd-name tackerd tacker
 </exec>
-    <filetree seq="create-tacker" root="/usr/local/etc/tacker/">conf/controller/tacker/config.txt</filetree>
     <exec seq="create-tacker" type="verbatim">
         source /root/bin/tacker-admin-openrc.sh
 	###############################
