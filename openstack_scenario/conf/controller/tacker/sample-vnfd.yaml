@@ -23,7 +23,7 @@ topology_template:
     VDU_dhcp:
       type: tosca.nodes.nfv.VDU.Tacker
       properties:
-        name: "Dhcp"
+        name: "DhcpTVlanID"
         image: xenial-server-cloudimg-amd64-vnx-GREDOS
         flavor: m1.smaller
         mgmt_driver: noop
@@ -40,10 +40,10 @@ topology_template:
            - echo "ddns-update-style none;" > /etc/dhcp/dhcpd.conf
            - echo "default-lease-time 604800;" >> /etc/dhcp/dhcpd.conf
            - echo "max-lease-time 604800;" >> /etc/dhcp/dhcpd.conf
-           - echo "subnet 10.1.10.0 netmask 255.255.255.0 {}" >> /etc/dhcp/dhcpd.conf
-           - echo "subnet 10.0.1.0 netmask 255.255.255.0 {">> /etc/dhcp/dhcpd.conf
-           - echo "  range 10.0.1.10 10.0.1.30;">> /etc/dhcp/dhcpd.conf
-           - echo "  option routers 10.0.1.254;">> /etc/dhcp/dhcpd.conf
+           - echo "subnet 10.0.0.0 netmask 255.255.255.0 {}" >> /etc/dhcp/dhcpd.conf
+           - echo "subnet 10.1.TVlanID.0 netmask 255.255.255.0 {">> /etc/dhcp/dhcpd.conf
+           - echo "  range 10.1.TVlanID.10 10.1.TVlanID.30;">> /etc/dhcp/dhcpd.conf
+           - echo "  option routers 10.1.TVlanID.254;">> /etc/dhcp/dhcpd.conf
            - echo "  option domain-name-servers 8.8.8.8;}">> /etc/dhcp/dhcpd.conf
            - service isc-dhcp-server start
            - echo 1 > /proc/sys/net/ipv4/ip_forward
@@ -55,7 +55,7 @@ topology_template:
     VDU_controller:
       type: tosca.nodes.nfv.VDU.Tacker
       properties:
-        name: { get_input: cp_name }
+        name: "ControllerOFVlanID"
         image: xenial-server-cloudimg-amd64-vnx-GREDOS
         flavor: m1.smaller
         mgmt_driver: noop
@@ -72,10 +72,10 @@ topology_template:
            - echo "auto ens4\niface ens4 inet dhcp" > /etc/network/interfaces.d/ens4.cfg
            - ifup ens4
            - rm /root/floodlight-java8/residential/residential.conf
-           - echo -n "{\"gw_port\"= 11," >> /root/floodlight-java8/residential/residential.conf
-           - echo -n "\"gw_mac\"= \"1a:1a:1a:1a:1a:1a\"," >> /root/floodlight-java8/residential/residential.conf
-           - echo -n "\"res_net_vlanid\"= 10," >> /root/floodlight-java8/residential/residential.conf
-           - echo -n "\"default_user_mac\"= \"68:eb:ae:68:eb:a1\"}" >> /root/floodlight-java8/residential/residential.conf
+           - echo -n "{\"gw_port\"= X_gw_port," >> /root/floodlight-java8/residential/residential.conf
+           - echo -n "\"gw_mac\"= \"X_gw_mac\"," >> /root/floodlight-java8/residential/residential.conf
+           - echo -n "\"res_net_vlanid\"= TVlanID," >> /root/floodlight-java8/residential/residential.conf
+           - echo -n "\"default_user_mac\"= \"X_default_user_mac\"}" >> /root/floodlight-java8/residential/residential.conf
            - sed -i 's/=/:/g' /root/floodlight-java8/residential/residential.conf
            - cd /root/floodlight-java8
            - ant
@@ -90,7 +90,7 @@ topology_template:
     VDU_cloud:
       type: tosca.nodes.nfv.VDU.Tacker
       properties:
-        name: "Cloud"
+        name: "CloudTVlanID"
         image: xenial-server-cloudimg-amd64-vnx-GREDOS
         flavor: m1.smaller
         mgmt_driver: noop
@@ -107,7 +107,7 @@ topology_template:
            - ifup ens4
            - echo "auto ens5\niface ens5 inet dhcp" > /etc/network/interfaces.d/ens5.cfg
            - ifup ens5
-           - echo "SERVERS='10.1.10.155'" > /etc/default/isc-dhcp-relay
+           - echo "SERVERS='10.0.0.155'" > /etc/default/isc-dhcp-relay
            - echo "INTERFACES='ens4 ens5'" >> /etc/default/isc-dhcp-relay
            - echo "OPTIONS=''" >> /etc/default/isc-dhcp-relay
            - service isc-dhcp-relay start
@@ -133,8 +133,8 @@ topology_template:
       properties:
         order: 1
         management: true
-        mac_address: 1a:1a:1a:1a:1a:1a
-        ip_address: 10.0.1.254
+        mac_address: X_gw_mac
+        ip_address: 10.1.TVlanID.254
         anti_spoofing_protection: false
       requirements:
         - virtualLink:
@@ -161,7 +161,7 @@ topology_template:
       properties:
         order: 0
         management: true
-        ip_address: 10.1.10.155
+        ip_address: 10.0.0.155
         anti_spoofing_protection: false
       requirements:
         - virtualLink:
@@ -187,7 +187,7 @@ topology_template:
       properties:
         order: 1
         management: true
-        ip_address: 10.0.2.30
+        ip_address: 10.2.OFVlanID.30
         anti_spoofing_protection: false
       requirements:
         - virtualLink:
@@ -199,26 +199,26 @@ topology_template:
     VL_cloud:
       type: tosca.nodes.nfv.VL
       properties:
-        network_name: vlan10
+        network_name: vlanTVlanID
         vendor: Tacker
 
     VL_controller:
       type: tosca.nodes.nfv.VL
       properties:
-        network_name: vlan200
+        network_name: vlanOFVlanID
         vendor: Tacker
 
     VL_Rnet:
       type: tosca.nodes.nfv.VL.ELAN
       properties:
-        network_name: Rnet10
+        network_name: RnetTVlanID
         vendor: Tacker
 
 
     VL_services:
       type: tosca.nodes.nfv.VL.ELAN
       properties:
-        network_name: services10
+        network_name: servicesTVlanID
         vendor: Tacker
 
 
