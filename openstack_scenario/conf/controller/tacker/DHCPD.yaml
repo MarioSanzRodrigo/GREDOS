@@ -1,0 +1,75 @@
+tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+metadata:
+    template_name: CLOUD_NATD
+node_types:
+    tosca.nodes.nfv.CLOUD_NAT:
+      requirements:
+        - host: VDU_dhcp
+        - virtualLink1:
+          type: tosca.nodes.nfv.VL
+          required: true
+      capabilities:
+        forwarder1:
+          type: tosca.capabilities.nfv.Forwarder
+          required: true
+
+topology_template:
+################################################## NFV Mappings
+  substitution_mappings:
+    node_type: tosca.nodes.nfv.CLOUD_NAT
+    requirements:
+      virtualLink1: [CP_VNFs, virtualLink1]
+    capabilities:
+      forwarder1: [CP_VNFs, forwarder]
+  node_templates:
+    dhcp_vnf:
+      type: tosca.nodes.nfv.VNFC.Tacker
+      requirements:
+        - host: VDU_dhcp
+
+################################################## NFV VDUs
+    VDU_dhcp:
+      type: tosca.nodes.nfv.VDU.Tacker
+      properties:
+        name: "DhcpTVlanID"
+        image: xenial-server-cloudimg-amd64-vnx-GREDOS
+        flavor: m1.smaller
+        mgmt_driver: noop
+        config: |
+          param0: key1
+          param1: key2
+        user_data_format: RAW
+        user_data: |
+           #cloud-config
+           manage_etc_hosts: true
+           runcmd:
+           - echo prueba > /root/fichero.txt
+           - echo "INTERFACES='ens3'" > /etc/default/isc-dhcp-server
+           - echo "ddns-update-style none;" > /etc/dhcp/dhcpd.conf
+           - echo "default-lease-time 604800;" >> /etc/dhcp/dhcpd.conf
+           - echo "max-lease-time 604800;" >> /etc/dhcp/dhcpd.conf
+           - echo "subnet 10.0.0.0 netmask 255.255.255.0 {}" >> /etc/dhcp/dhcpd.conf
+           - echo "subnet 10.1.TVlanID.0 netmask 255.255.255.0 {">> /etc/dhcp/dhcpd.conf
+           - echo "  range 10.1.TVlanID.10 10.1.TVlanID.30;">> /etc/dhcp/dhcpd.conf
+           - echo "  option routers 10.1.TVlanID.254;">> /etc/dhcp/dhcpd.conf
+           - echo "  option domain-name-servers 8.8.8.8;}">> /etc/dhcp/dhcpd.conf
+           - service isc-dhcp-server start
+           - echo 1 > /proc/sys/net/ipv4/ip_forward
+           - ip r del default
+           - ip r add default dev ens3
+
+################################################## NFV CPs
+    CP_VNFs:
+      type: tosca.nodes.nfv.CP.Tacker
+      properties:
+        order: 0
+        management: true
+        anti_spoofing_protection: false
+      requirements:
+        - virtualBinding:
+            node: VDU_dhcp
+
+
+
+
+

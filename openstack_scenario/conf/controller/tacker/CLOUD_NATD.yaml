@@ -1,0 +1,108 @@
+tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+metadata:
+    template_name: CLOUD_NATD
+node_types:
+    tosca.nodes.nfv.CLOUD_NAT:
+      requirements:
+        - host: VDU_cloud
+        - virtualLink1:
+          type: tosca.nodes.nfv.VL
+          required: true
+        - virtualLink2:
+          type: tosca.nodes.nfv.VL
+          required: true
+        - VirtualLink3:
+          type: tosca.nodes.nfv.VL
+          required: true
+      capabilities:
+        forwarder1:
+          type: tosca.capabilities.nfv.Forwarder
+          required: true
+        forwarder2:
+          type: tosca.capabilities.nfv.Forwarder
+          required: true
+        forwarder3:
+          type: tosca.capabilities.nfv.Forwarder
+          required: true
+
+topology_template:
+################################################## NFV Mappings
+  substitution_mappings:
+    node_type: tosca.nodes.nfv.CLOUD_NAT
+    requirements:
+      virtualLink1: [CP_VNFs, virtualLink1]
+      virtualLink2: [CP_External, virtualLink2]
+      virtualLink3: [CP_Services, virtualLink3]
+    capabilities:
+      forwarder1: [CP_VNFs, forwarder]
+      forwarder2: [CP_External, forwarder]
+      forwarder3: [CP_Services, forwarder]
+  node_templates:
+    cloud_vnf:
+      type: tosca.nodes.nfv.VNFC.Tacker
+      requirements:
+        - host: VDU_cloud
+
+################################################## NFV VDUs
+    VDU_cloud:
+      type: tosca.nodes.nfv.VDU.Tacker
+      properties:
+        name: "CloudTVlanID"
+        image: xenial-server-cloudimg-amd64-vnx-GREDOS
+        flavor: m1.smaller
+        mgmt_driver: noop
+        config: |
+          param0: key1
+          param1: key2
+        user_data_format: RAW
+        user_data: |
+           #cloud-config
+           manage_etc_hosts: true
+           runcmd:
+           - echo prueba > /root/fichero.txt
+           - echo "auto ens4\niface ens4 inet dhcp" > /etc/network/interfaces.d/ens4.cfg
+           - ifup ens4
+           - echo "auto ens5\niface ens5 inet dhcp" > /etc/network/interfaces.d/ens5.cfg
+           - ifup ens5
+           - echo "SERVERS='10.0.0.155'" > /etc/default/isc-dhcp-relay
+           - echo "INTERFACES='ens4 ens5'" >> /etc/default/isc-dhcp-relay
+           - echo "OPTIONS=''" >> /etc/default/isc-dhcp-relay
+           - service isc-dhcp-relay start
+           - echo 1 > /proc/sys/net/ipv4/ip_forward
+           - iptables -t nat -A POSTROUTING -o ens3 -j MASQUERADE
+
+################################################## NFV CPs
+    CP_External:
+      type: tosca.nodes.nfv.CP.Tacker
+      properties:
+        order: 0
+        management: true
+        anti_spoofing_protection: false
+      requirements:
+        - virtualBinding:
+            node: VDU_cloud
+
+    CP_VNFs:
+      type: tosca.nodes.nfv.CP.Tacker
+      properties:
+        order: 1
+        management: true
+        mac_address: X_gw_mac
+        ip_address: 10.1.TVlanID.254
+        anti_spoofing_protection: false
+      requirements:
+        - virtualBinding:
+            node: VDU_cloud
+
+    CP_Service:
+      type: tosca.nodes.nfv.CP.Tacker
+      properties:
+        order: 2
+        management: true
+        anti_spoofing_protection: false
+      requirements:
+        - virtualBinding:
+            node: VDU_cloud
+
+
+
