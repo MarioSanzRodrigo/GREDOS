@@ -62,7 +62,6 @@ topology_template:
     CP_VNFs:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
-        order: 0
         management: true
         anti_spoofing_protection: false
       requirements:

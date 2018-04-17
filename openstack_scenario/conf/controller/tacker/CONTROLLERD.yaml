@@ -4,7 +4,7 @@ metadata:
 node_types:
     tosca.nodes.nfv.CONTROLLER:
       requirements:
-        - host: VDU_controller
+        - host: VDU_Controller
         - virtualLink1:
           type: tosca.nodes.nfv.VL
           required: true
@@ -36,7 +36,7 @@ topology_template:
         - host: VDU_Controller
 
 ################################################## NFV VDUs
-    VDU_controller:
+    VDU_Controller:
       type: tosca.nodes.nfv.VDU.Tacker
       properties:
         name: "ControllerOFVlanID"
@@ -72,7 +72,6 @@ topology_template:
     CP_External:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
-        order: 0
         management: true
         anti_spoofing_protection: false
       requirements:
@@ -82,10 +81,7 @@ topology_template:
     CP_Delivering:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
-        order: 1
         management: true
-        mac_address: X_gw_mac
-        ip_address: 10.1.TVlanID.254
         anti_spoofing_protection: false
       requirements:
         - virtualBinding:

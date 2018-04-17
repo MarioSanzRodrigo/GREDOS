@@ -51,7 +51,6 @@ topology_template:
     CP_Services:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
-        order: 0
         management: true
         anti_spoofing_protection: false
       requirements:
@@ -61,10 +60,7 @@ topology_template:
     CP_Delivering:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
-        order: 1
         management: true
-        mac_address: X_gw_mac
-        ip_address: 10.1.TVlanID.254
         anti_spoofing_protection: false
       requirements:
         - virtualBinding:
