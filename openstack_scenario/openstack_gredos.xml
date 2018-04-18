@@ -1141,6 +1141,9 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
 	tacker vnfd-create --vnfd-file SHAPED.yaml  SHAPED
 	tacker vnfd-create --vnfd-file DHCPD.yaml  DHCPD
 	tacker vnfd-create --vnfd-file CONTROLLERD.yaml  CONTROLLERD
+
+	tacker vnffgd-create --vnffgd-file VNFFG.yaml vnffg
+
         tacker nsd-create --nsd-file  sample-nsd.yaml sample-nsd
 	tacker ns-create --nsd-name sample-nsd vMando
 

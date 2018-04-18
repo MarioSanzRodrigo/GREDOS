@@ -1,0 +1,36 @@
+tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+description: Default forwarding path for vMANDO
+topology_template:
+  node_templates:
+    Forwarding_path_df:
+      type: tosca.nodes.nfv.FP.Tacker
+      description: Default Path
+      properties:
+        id: 10
+        policy:
+          type: ACL
+          criteria:
+            - vlan_id:10
+        path:
+          - forwarder: CP_Delivering
+          - forwarder: SHAPED
+            capability: forwarder1
+          - forwarder: SHAPED
+            capability: forwarder2
+          - forwarder: CLOUD_NATD
+            capability: forwarder1
+          - forwarder: CLOUD_NATD
+            capability: forwarder2
+          - forwarder: CP_External
+  groups:
+    VNFFG1:
+      type: tosca.groups.nfv.VNFFG
+      description: Default path for vMANDO
+      properties:
+        vendor: tacker
+        version: 1.0
+        number_of_endpoints: 6
+        dependent_virtual_link: [VL_Delivering,VL_NFVs,VL_External]
+        connection_point: [CP_Delivering,CP_SHAPE_Delivering,CP_SHAPE_NFVs,CP_CLOUD_NAT_NFVs,CP_CLOUD_NAT_External,CP_External]
+        constituent_vnfs: [SHAPED,CLOUD_NATD]
+      members: [Forwarding_path_df]
