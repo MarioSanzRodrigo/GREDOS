@@ -1096,13 +1096,6 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
         tacker vnfd-create --vnfd-file vnfd-$TVlanID-$OFVlanID.yaml  tackerd-$TVlanID-$OFVlanID
 	tacker vnf-create --vnfd-name tackerd-$TVlanID-$OFVlanID tacker
 
-
-	tacker vnfd-create --vnfd-file CLOUD_NATD.yaml  CLOUD_NATD
-	tacker vnfd-create --vnfd-file SHAPED.yaml  SHAPED
-	tacker vnfd-create --vnfd-file DHCPD.yaml  DHCPD
-	tacker vnfd-create --vnfd-file CONTROLLERD.yaml  CONTROLLERD
-        tacker nsd-create --nsd-file  sample-nsd.yaml sample-nsd.yaml
-
 </exec>
 
 
@@ -1148,7 +1141,8 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
 	tacker vnfd-create --vnfd-file SHAPED.yaml  SHAPED
 	tacker vnfd-create --vnfd-file DHCPD.yaml  DHCPD
 	tacker vnfd-create --vnfd-file CONTROLLERD.yaml  CONTROLLERD
-        tacker nsd-create --nsd-file  sample-nsd.yaml sample-nsd.yaml
+        tacker nsd-create --nsd-file  sample-nsd.yaml sample-nsd
+	tacker ns-create --nsd-name sample-nsd vMando
 
 </exec>
 <!-- GREDOS -->

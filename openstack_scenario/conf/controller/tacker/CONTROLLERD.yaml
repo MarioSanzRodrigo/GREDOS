@@ -22,11 +22,11 @@ topology_template:
   substitution_mappings:
     node_type: tosca.nodes.nfv.CONTROLLER
     requirements:
-      virtualLink1: [CP_Delivering, virtualLink1]
-      virtualLink2: [CP_External, virtualLink2]
+      virtualLink1: [CP_CONTROLLER_Delivering, virtualLink1]
+      virtualLink2: [CP_CONTROLLER_External, virtualLink2]
     capabilities:
-      forwarder1: [CP_Delivering, forwarder]
-      forwarder2: [CP_External, forwarder]
+      forwarder1: [CP_CONTROLLER_Delivering, forwarder]
+      forwarder2: [CP_CONTROLLER_External, forwarder]
   node_templates:
     controller_vnf:
       type: tosca.nodes.nfv.VNFC.Tacker
@@ -67,7 +67,7 @@ topology_template:
            - python boot.py &
 
 ################################################## NFV CPs
-    CP_External:
+    CP_CONTROLLER_External:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
         management: true
@@ -76,7 +76,7 @@ topology_template:
         - virtualBinding:
             node: VDU_Controller
 
-    CP_Delivering:
+    CP_CONTROLLER_Delivering:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
         management: true

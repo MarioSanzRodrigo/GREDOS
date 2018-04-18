@@ -32,23 +32,24 @@ topology_template:
       requirements:
         - virtualLink1: VL_VNFs
 ################################################## vMANDO CPs
-#    CP_Delivering:
-#      type: tosca.nodes.nfv.CP
-#      requirements:
-#        virtualLink:
-#          node: VL_Delivering
-#
-#    CP_External:
-#      type: tosca.nodes.nfv.CP
-#      requirements:
-#        virtualLink:
-#          node: VL_External
-#
-#    CP_Services:
-#      type: tosca.nodes.nfv.CP
-#      requirements:
-#        virtualLink:
-#          node: VL_Services
+    CP_Delivering:
+      type: tosca.nodes.nfv.CP
+      requirements:
+        - virtualLink:
+          node: VL_Delivering
+
+    CP_External:
+      type: tosca.nodes.nfv.CP
+      requirements:
+        - virtualLink:
+          node: VL_External
+
+    CP_Services:
+      type: tosca.nodes.nfv.CP
+      requirements:
+        - virtualLink:
+          node: VL_Services
+
 ################################################## Virtual Links
     VL_Delivering:
       type: tosca.nodes.nfv.VL

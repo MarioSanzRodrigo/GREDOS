@@ -22,11 +22,11 @@ topology_template:
   substitution_mappings:
     node_type: tosca.nodes.nfv.SHAPE
     requirements:
-      virtualLink1: [CP_Delivering, virtualLink1]
-      virtualLink2: [CP_Services, virtualLink2]
+      virtualLink1: [CP_SHAPE_Delivering, virtualLink1]
+      virtualLink2: [CP_SHAPE_Services, virtualLink2]
     capabilities:
-      forwarder1: [CP_Delivering, forwarder]
-      forwarder2: [CP_Services, forwarder]
+      forwarder1: [CP_SHAPE_Delivering, forwarder]
+      forwarder2: [CP_SHAPE_Services, forwarder]
   node_templates:
     shape_vnf:
       type: tosca.nodes.nfv.VNFC.Tacker
@@ -46,7 +46,7 @@ topology_template:
           param1: key2
 
 ################################################## NFV CPs
-    CP_Services:
+    CP_SHAPE_Services:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
         management: true
@@ -55,7 +55,7 @@ topology_template:
         - virtualBinding:
             node: VDU_Shape
 
-    CP_Delivering:
+    CP_SHAPE_Delivering:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
         management: true

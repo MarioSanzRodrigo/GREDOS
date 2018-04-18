@@ -28,13 +28,13 @@ topology_template:
   substitution_mappings:
     node_type: tosca.nodes.nfv.CLOUD_NAT
     requirements:
-      virtualLink1: [CP_VNFs, virtualLink1]
-      virtualLink2: [CP_External, virtualLink2]
-      virtualLink3: [CP_Services, virtualLink3]
+      virtualLink1: [CP_CLOUD_NAT_VNFs, virtualLink1]
+      virtualLink2: [CP_CLOUD_NAT_External, virtualLink2]
+      virtualLink3: [CP_CLOUD_NAT_Service, virtualLink3]
     capabilities:
-      forwarder1: [CP_VNFs, forwarder]
-      forwarder2: [CP_External, forwarder]
-      forwarder3: [CP_Services, forwarder]
+      forwarder1: [CP_CLOUD_NAT_VNFs, forwarder]
+      forwarder2: [CP_CLOUD_NAT_External, forwarder]
+      forwarder3: [CP_CLOUD_NAT_Service, forwarder]
   node_templates:
     cloud_vnf:
       type: tosca.nodes.nfv.VNFC.Tacker
@@ -70,7 +70,7 @@ topology_template:
            - iptables -t nat -A POSTROUTING -o ens3 -j MASQUERADE
 
 ################################################## NFV CPs
-    CP_External:
+    CP_CLOUD_NAT_External:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
         order: 0
@@ -80,7 +80,7 @@ topology_template:
         - virtualBinding:
             node: VDU_cloud
 
-    CP_VNFs:
+    CP_CLOUD_NAT_VNFs:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
         management: true
@@ -89,7 +89,7 @@ topology_template:
         - virtualBinding:
             node: VDU_cloud
 
-    CP_Service:
+    CP_CLOUD_NAT_Service:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
         management: true

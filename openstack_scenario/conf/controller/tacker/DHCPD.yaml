@@ -16,9 +16,9 @@ topology_template:
   substitution_mappings:
     node_type: tosca.nodes.nfv.DHCP
     requirements:
-      virtualLink1: [CP_VNFs, virtualLink1]
+      virtualLink1: [CP_DHCP_VNFs, virtualLink1]
     capabilities:
-      forwarder1: [CP_VNFs, forwarder]
+      forwarder1: [CP_DHCP_VNFs, forwarder]
   node_templates:
     dhcp_vnf:
       type: tosca.nodes.nfv.VNFC.Tacker
@@ -57,7 +57,7 @@ topology_template:
            - ip r add default dev ens3
 
 ################################################## NFV CPs
-    CP_VNFs:
+    CP_DHCP_VNFs:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
         management: true
