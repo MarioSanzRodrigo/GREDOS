@@ -1,19 +1,17 @@
 tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
-metadata:
-    template_name: CLOUD_NATD
 node_types:
     tosca.nodes.nfv.CLOUD_NAT:
       requirements:
         - host: VDU_cloud
         - virtualLink1:
-          type: tosca.nodes.nfv.VL
-          required: true
+            type: tosca.nodes.nfv.VL
+            required: true
         - virtualLink2:
-          type: tosca.nodes.nfv.VL
-          required: true
-        - VirtualLink3:
-          type: tosca.nodes.nfv.VL
-          required: true
+            type: tosca.nodes.nfv.VL
+            required: true
+        - virtualLink3:
+            type: tosca.nodes.nfv.VL
+            required: true
       capabilities:
         forwarder1:
           type: tosca.capabilities.nfv.Forwarder

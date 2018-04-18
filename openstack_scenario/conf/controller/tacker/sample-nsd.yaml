@@ -32,47 +32,46 @@ topology_template:
       requirements:
         - virtualLink1: VL_VNFs
 ################################################## vMANDO CPs
-    CP_Delivering:
-      type: tosca.nodes.nfv.CP
-      requirements:
-        - virtualLink:
-            node: VL_Delivering
-
-    CP_External:
-      type: tosca.nodes.nfv.CP
-      requirements:
-        - virtualLink:
-            node: VL_External
-
-    CP_Services:
-      type: tosca.nodes.nfv.CP
-      requirements:
-        - virtualLink:
-            node: VL_Services
+#    CP_Delivering:
+#      type: tosca.nodes.nfv.CP
+#      requirements:
+#        virtualLink:
+#          node: VL_Delivering
+#
+#    CP_External:
+#      type: tosca.nodes.nfv.CP
+#      requirements:
+#        virtualLink:
+#          node: VL_External
+#
+#    CP_Services:
+#      type: tosca.nodes.nfv.CP
+#      requirements:
+#        virtualLink:
+#          node: VL_Services
 ################################################## Virtual Links
     VL_Delivering:
-      type: tosca.nodes.nfv.ELAN
+      type: tosca.nodes.nfv.VL
       properties:
-        - virtual_linkable:
-            ocurrences: 5
+        network_name: vlan11
+        vendor: Tacker
 
     VL_VNFs:
-      type: tosca.nodes.nfv.VL.ELAN
+      type: tosca.nodes.nfv.VL
       properties:
-        - virtual_linkable:
-            ocurrences: 5
+        network_name: services11
+        vendor: Tacker
 
     VL_External:
-      type: tosca.nodes.nfv.VL.ELAN
+      type: tosca.nodes.nfv.VL
       properties:
-        - virtual_linkable:
-            ocurrences: 5
+        network_name: Rnet11
+        vendor: Tacker
 
     VL_Services:
-      type: tosca.nodes.nfv.VL.ELINE
+      type: tosca.nodes.nfv.VL
       properties:
-        - virtual_linkable:
-            ocurrences: 5
+        vendor: Tacker
 
 
 

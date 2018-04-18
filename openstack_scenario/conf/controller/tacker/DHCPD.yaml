@@ -1,13 +1,11 @@
 tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
-metadata:
-    template_name: CLOUD_NATD
 node_types:
-    tosca.nodes.nfv.CLOUD_NAT:
+    tosca.nodes.nfv.DHCP:
       requirements:
         - host: VDU_dhcp
         - virtualLink1:
-          type: tosca.nodes.nfv.VL
-          required: true
+            type: tosca.nodes.nfv.VL
+            required: true
       capabilities:
         forwarder1:
           type: tosca.capabilities.nfv.Forwarder
@@ -16,7 +14,7 @@ node_types:
 topology_template:
 ################################################## NFV Mappings
   substitution_mappings:
-    node_type: tosca.nodes.nfv.CLOUD_NAT
+    node_type: tosca.nodes.nfv.DHCP
     requirements:
       virtualLink1: [CP_VNFs, virtualLink1]
     capabilities:

@@ -986,7 +986,7 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
     # Deleting the keypair
     openstack keypair delete vm1
 </exec>
-    <filetree seq="step92" root="/usr/local/etc/tacker/">conf/controller/tacker/sample-vnfd.yaml</filetree>
+    <!--<filetree seq="step92" root="/usr/local/etc/tacker/">conf/controller/tacker/sample-vnfd.yaml</filetree>-->
     <exec seq="create-test-tacker" type="verbatim">
         source /root/bin/tacker-admin-openrc.sh
 
@@ -1003,7 +1003,7 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
 	tacker vnf-create --vnfd-name tackerd tacker
 </exec>
 
-    <filetree seq="step92" root="/usr/local/etc/tacker/">conf/controller/tacker/sample-vnfd.yaml</filetree>
+    <!--<filetree seq="step92" root="/usr/local/etc/tacker/">conf/controller/tacker/sample-vnfd.yaml</filetree>-->
 
 <exec seq="destroy-test-tacker" type="verbatim">
         source /root/bin/tacker-admin-openrc.sh
@@ -1053,6 +1053,7 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
         tacker vnfd-create --vnfd-file sample-vnfd.yaml tackerd
 	tacker vnf-create --vnfd-name tackerd tacker
 </exec>
+
     <exec seq="create-tacker" type="verbatim">
         source /root/bin/tacker-admin-openrc.sh
 	###############################
@@ -1094,6 +1095,61 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
 	sed -i "s/X_default_user_mac/$X_default_user_mac/g" vnfd-$TVlanID-$OFVlanID.yaml
         tacker vnfd-create --vnfd-file vnfd-$TVlanID-$OFVlanID.yaml  tackerd-$TVlanID-$OFVlanID
 	tacker vnf-create --vnfd-name tackerd-$TVlanID-$OFVlanID tacker
+
+
+	tacker vnfd-create --vnfd-file CLOUD_NATD.yaml  CLOUD_NATD
+	tacker vnfd-create --vnfd-file SHAPED.yaml  SHAPED
+	tacker vnfd-create --vnfd-file DHCPD.yaml  DHCPD
+	tacker vnfd-create --vnfd-file CONTROLLERD.yaml  CONTROLLERD
+        tacker nsd-create --nsd-file  sample-nsd.yaml sample-nsd.yaml
+
+</exec>
+
+
+    <filetree seq="create-tacker2" root="/usr/local/etc/tacker/">conf/controller/tacker/CLOUD_NATD.yaml</filetree>
+    <filetree seq="create-tacker2" root="/usr/local/etc/tacker/">conf/controller/tacker/SHAPED.yaml</filetree>
+    <filetree seq="create-tacker2" root="/usr/local/etc/tacker/">conf/controller/tacker/DHCPD.yaml</filetree>
+    <filetree seq="create-tacker2" root="/usr/local/etc/tacker/">conf/controller/tacker/CONTROLLERD.yaml</filetree>
+    <filetree seq="create-tacker2" root="/usr/local/etc/tacker/">conf/controller/tacker/sample-nsd.yaml</filetree>
+    <exec seq="create-tackerns" type="verbatim">
+        source /root/bin/tacker-admin-openrc.sh
+	###############################
+	#Parameters
+	###############################
+	#VLANIDs variables - Change them to change the Residential network scenario - Dont forget to run the config_banana.py script in bananapi
+	TVlanID=11
+	OFVlanID=201
+	X_gw_port=11
+	X_gw_mac=1a:1a:1a:1a:1a:1a
+	X_default_user_mac=68:eb:ae:68:eb:a1
+	###############################
+	echo $TVlanID
+        # Create vlan based networks and subnetworks
+        openstack network create --share --provider-physical-network vlan --provider-network-type vlan --provider-segment $TVlanID vlan$TVlanID
+        openstack network create --share --provider-physical-network vlan --provider-network-type vlan --provider-segment $OFVlanID vlan$OFVlanID
+        openstack subnet create --network vlan$TVlanID --gateway 10.1.$TVlanID.1 --dns-nameserver 8.8.8.8 --subnet-range 10.1.$TVlanID.0/24 --allocation-pool start=10.1.$TVlanID.2,end=10.1.$TVlanID.40 subvlan$TVlanID
+        openstack subnet create --network vlan$OFVlanID --gateway 10.2.$OFVlanID.87 --dns-nameserver 8.8.8.8 --subnet-range 10.2.$OFVlanID.0/24 --allocation-pool start=10.2.$OFVlanID.2,end=10.2.$OFVlanID.40 subvlan$OFVlanID
+
+
+        # Create network
+        openstack network create Rnet$TVlanID
+        openstack subnet create --network Rnet$TVlanID --gateway 10.3.$TVlanID.1 --dns-nameserver 8.8.8.8 --subnet-range 10.3.$TVlanID.0/24 --allocation-pool start=10.3.$TVlanID.8,end=10.3.$TVlanID.100 subRnet$TVlanID
+        openstack network create services$TVlanID
+        openstack subnet create --network services$TVlanID --dns-nameserver 8.8.8.8 --subnet-range 10.0.0.0/24 --allocation-pool start=10.0.0.10,end=10.0.0.100 subservices$TVlanID
+
+        # Create router
+        openstack router create r$TVlanID
+        openstack router set r$TVlanID --external-gateway ExtNet
+        openstack router add subnet r$TVlanID subRnet$TVlanID
+
+        cd /usr/local/etc/tacker
+
+	tacker vnfd-create --vnfd-file CLOUD_NATD.yaml  CLOUD_NATD
+	tacker vnfd-create --vnfd-file SHAPED.yaml  SHAPED
+	tacker vnfd-create --vnfd-file DHCPD.yaml  DHCPD
+	tacker vnfd-create --vnfd-file CONTROLLERD.yaml  CONTROLLERD
+        tacker nsd-create --nsd-file  sample-nsd.yaml sample-nsd.yaml
+
 </exec>
 <!-- GREDOS -->
 
