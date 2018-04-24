@@ -1153,24 +1153,31 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
 
     <exec seq="osm-configuration" type="verbatim">
         source /root/bin/admin-openrc.sh
-	# Create mgmt network linking OSM and OpenStack: VLAN 500
-	openstack network create --share --provider-physical-network vlan --provider-network-type vlan --provider-segment 500 osm-mgmt
 
-	# Create mgmt subnet:
-	openstack subnet create --network osm-mgmt --dns-nameserver 8.8.8.8 --subnet-range 10.208.0.0/24 --allocation-pool start=10.208.0.2,end=10.208.0.254 subnet-osm-mgmt
-
-        sed -i -e 's/^#mechanism_drivers =.*/mechanism_drivers = openvswitch,l2population,sriovnicswitch/' /etc/neutron/plugins/ml2/ml2_conf.ini
+        sed -i -e 's/^mechanism_drivers =.*/mechanism_drivers = openvswitch,l2population,sriovnicswitch/' /etc/neutron/plugins/ml2/ml2_conf.ini
 
         sed -i -e 's/network_vlan_ranges = external,vlan:1:1000/network_vlan_ranges = external,vlan:1:1000,physnet:2000:3000/' /etc/neutron/plugins/ml2/ml2_conf.ini
 
+	echo "" >> /etc/neutron/plugins/ml2/ml2_conf.ini
 	echo "[ml2_sriov]" >> /etc/neutron/plugins/ml2/ml2_conf.ini
-	echo "supported_pci_vendor_devs = 8086:10ed" >> /etc/neutron/plugins/ml2/ml2_conf.ini
+	#echo "supported_pci_vendor_devs = 8086:10ed" >> /etc/neutron/plugins/ml2/ml2_conf.ini
+	echo "supported_pci_vendor_devs = 8086:1502" >> /etc/neutron/plugins/ml2/ml2_conf.ini
 
 #No probados
-        sed -i -e 's/^enabled_filters=RetryFilter/scheduler_available_filters=nova.scheduler.filters.all_filters/' /etc/neutron/plugins/ml2/ml2_conf.ini
 
-        sed -i -e 's/^#available_filters=/scheduler_default_filters=RetryFilter,AvailabilityZoneFilter,RamFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,CoreFilter, PciPassthroughFilter/' /etc/neutron/plugins/ml2/ml2_conf.ini
 
+	echo "scheduler_available_filters=nova.scheduler.filters.all_filters" >> /etc/nova/nova.conf
+	echo "scheduler_default_filters=RetryFilter,AvailabilityZoneFilter,RamFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,CoreFilter, PciPassthroughFilter" >> /etc/nova/nova.conf
+
+
+	service neutron-server restart
+	service nova-scheduler restart
+
+# En reclamo
+# export OSM_HOSTNAME=`sudo lxc list | awk '($2=="SO-ub"){print $6}'`
+# export OSM_RO_HOSTNAME=`sudo lxc list | awk '($2=="RO"){print $6}'`
+# osm vim-create --name openstack-site --user admin --password xxxx --auth_url http://10.0.10.11:5000/v2.0 --tenant admin --account_type openstack --config='{security_groups: default, keypair: mykey}'
+#osm vim-create --name openstack-site4 --user admin --password xxxx --auth_url http://10.0.10.11:35357/v3 --tenant admin --account_type openstack --config='{security_groups: default, keypair: mykey}'
 
 
 
@@ -1347,6 +1354,7 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
 <!-- GREDOS -->
     <exec seq="osm-configuration" type="verbatim">
         sed -i -e 's/#passthrough_whitelist =/pci_passthrough_whitelist=[{"devname": "p3p1", "physical_network": "physnet"}, {"devname": "p3p2", "physical_network": "physnet"}]/' /etc/nova/nova.conf
+	service nova-compute restart
 </exec>
 <!-- GREDOS -->
 
@@ -1457,6 +1465,8 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
 <!-- GREDOS -->
     <exec seq="on_boot" type="verbatim" ostype="system">
        ip r add 10.0.1.0/24 dev ExtNet
+	<!-- osm connection -->
+	ip r add 10.95.254.0/24 dev eno1 via 138.4.7.181
     </exec>
 <!-- GREDOS -->
   </host>
