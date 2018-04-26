@@ -1173,14 +1173,6 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
 	service neutron-server restart
 	service nova-scheduler restart
 
-# En reclamo
-# export OSM_HOSTNAME=`sudo lxc list | awk '($2=="SO-ub"){print $6}'`
-# export OSM_RO_HOSTNAME=`sudo lxc list | awk '($2=="RO"){print $6}'`
-# osm vim-create --name openstack-site --user admin --password xxxx --auth_url http://10.0.10.11:5000/v2.0 --tenant admin --account_type openstack --config='{security_groups: default, keypair: mykey}'
-#osm vim-create --name openstack-site4 --user admin --password xxxx --auth_url http://10.0.10.11:35357/v3 --tenant admin --account_type openstack --config='{security_groups: default, keypair: mykey}'
-
-
-
 </exec>
 <!-- GREDOS -->
 
