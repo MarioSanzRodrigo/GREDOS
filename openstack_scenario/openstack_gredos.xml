@@ -1456,6 +1456,7 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
     </exec>
 <!-- GREDOS -->
     <exec seq="on_boot" type="verbatim" ostype="system">
+	ifconfig ExtNet up
        ip r add 10.0.1.0/24 dev ExtNet
 	<!-- osm connection -->
 	ip r add 10.95.254.0/24 dev eno1 via 138.4.7.181
