@@ -1174,6 +1174,13 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
 	service nova-scheduler restart
 
 </exec>
+
+
+ <exec seq="vlan-net" type="verbatim">
+source /root/bin/admin-openrc.sh        
+openstack network create --share --provider-physical-network vlan --provider-network-type vlan --provider-segment 555 mgmt
+        openstack subnet create --network mgmt --gateway 10.95.254.2 --dns-nameserver 8.8.8.8 --subnet-range 10.95.254.0/24 --allocation-pool start=10.95.254.200,end=10.95.254.254 submgmt
+</exec>
 <!-- GREDOS -->
 
 
@@ -1440,6 +1447,9 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
     </hostif>
     <hostif net="MgmtNet">
       <ipv4>10.0.0.1/24</ipv4>
+    </hostif>
+	<hostif net="VlanNet">
+       <ipv4>10.0.2.1/24</ipv4>
     </hostif>
     <exec seq="step00" type="verbatim">
     	echo "--\n-- Waiting for all VMs to be ssh ready...\n--"
