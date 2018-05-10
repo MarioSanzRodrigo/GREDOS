@@ -78,8 +78,8 @@ sudo ovs-vsctl --may-exist add-br ${SWITCH1}
 sudo ovs-vsctl --may-exist add-br ${SWITCH2}
 sudo ip link set ${SWITCH1} up
 sudo ip link set ${SWITCH2} up
-sudo ip addr add 192.168.1.1/24 dev ${SWITCH1}
-sudo ip addr add 192.168.2.1/24 dev ${SWITCH2}
+sudo ip addr add 10.0.10.2/24 dev ${SWITCH1}
+sudo ip addr add 10.0.2.2/24 dev ${SWITCH2}
 
 
 if ! sudo ovs-vsctl br-exists ${TUNNSWITCH_NAME}; then
