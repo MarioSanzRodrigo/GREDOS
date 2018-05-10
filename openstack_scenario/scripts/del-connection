@@ -1,0 +1,18 @@
+#!/bin/bash
+
+TUNNSWITCH_NAME='lab'
+SWITCH1='ExtNet'
+SWITCH2='VlanNet'
+
+
+echo "--"
+echo "-- Deleting tunnel switch and ports if they exist..."
+sudo ovs-vsctl --if-exists del-port ${SWITCH1} ${TUNNSWITCH_NAME}-${SWITCH1}a
+sudo ovs-vsctl --if-exists del-port ${SWITCH2} ${TUNNSWITCH_NAME}-${SWITCH2}a
+sudo ovs-vsctl --if-exists del-br ${TUNNSWITCH_NAME}
+sudo ip link | grep ${TUNNSWITCH_NAME}-${SWITCH1}a > /dev/null && sudo ip link del ${TUNNSWITCH_NAME}-${SWITCH1}a
+sudo ip link | grep ${TUNNSWITCH_NAME}-${SWITCH2}a > /dev/null && sudo ip link del ${TUNNSWITCH_NAME}-${SWITCH1}a
+echo "-- ...OK"
+echo "--"
+
+

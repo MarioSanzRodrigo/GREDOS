@@ -1,0 +1,108 @@
+#!/bin/bash
+
+TUNNSWITCH_NAME='lab'
+SWITCH1='ExtNet'
+SWITCH2='VlanNet'
+
+if [ "$#" -ne 1 ]; then
+    echo "--"
+    echo "-- Usage:  create-tunnel <ip_address|name>"
+    echo "--"
+    exit 1
+fi
+
+TUNN_DST=$1
+
+# Test an IP address for validity:
+# From: http://www.linuxjournal.com/content/validating-ip-address-bash-script
+# Usage:
+#      valid_ip IP_ADDRESS
+#      if [[ $? -eq 0 ]]; then echo good; else echo bad; fi
+#   OR
+#      if valid_ip IP_ADDRESS; then echo good; else echo bad; fi
+#
+function valid_ip()
+{
+    local  ip=$1
+    local  stat=1
+
+    if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+        OIFS=$IFS
+        IFS='.'
+        ip=($ip)
+        IFS=$OIFS
+        [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 \
+            && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
+        stat=$?
+    fi
+    return $stat
+}
+
+
+
+#
+# Main
+#
+if ! valid_ip $TUNN_DST; then 
+
+    if grep -q "^[a-zAZ]" <<< $TUNN_DST; then 
+        # It is a name, we try to translate...
+        IPADDR=$( host -t a $TUNN_DST | awk '{ print $4 }' )
+        echo $IPADDR
+        if ! valid_ip $IPADDR; then 
+            echo "--"
+            echo "-- ERROR: cannot get IP address associated to $TUNN_DST domain name"
+            echo "--"
+            exit 1
+        else
+            MSG="$TUNN_DST ($IPADDR)"
+            TUNN_DST=$IPADDR    
+        fi
+    else
+        # Not a name, it is an error...
+        echo "--"
+        echo "-- ERROR: $TUNN_DST is not a valid IPv4 address"
+        echo "--"
+        exit 1
+    fi
+else
+    MSG=$TUNN_DST
+fi
+
+echo "--"
+echo "-- Creating tunnel to $MSG.."
+echo "--"
+
+if ! sudo ovs-vsctl br-exists ${TUNNSWITCH_NAME}; then
+    # Create switches
+    echo "-- Creating ${TUNNSWITCH_NAME} switch..."
+    sudo ovs-vsctl --may-exist add-br ${TUNNSWITCH_NAME}
+
+    echo "-- Establishing connections for ${SWITCH1} scenario network..."
+    # Create ${SWITCH1} veth pair to connect ${SWITCH1} switch to ${TUNNSWITCH_NAME}-v1000 fake switch 
+    sudo ip link add ${TUNNSWITCH_NAME}-${SWITCH1}a type veth peer name ${TUNNSWITCH_NAME}-${SWITCH1}b
+    sudo ip link set ${TUNNSWITCH_NAME}-${SWITCH1}a up
+    sudo ip link set ${TUNNSWITCH_NAME}-${SWITCH1}b up
+    sudo ovs-vsctl add-port ${SWITCH1} ${TUNNSWITCH_NAME}-${SWITCH1}a
+    sudo ovs-vsctl add-port ${TUNNSWITCH_NAME} ${TUNNSWITCH_NAME}-${SWITCH1}b
+    sudo ovs-vsctl set port ${TUNNSWITCH_NAME}-${SWITCH1}b tag=1000
+
+    echo "-- Establishing connections for ${SWITCH2} scenario network..."
+    # Create ${SWITCH1} veth pair to connect ${SWITCH2} switch to ${TUNNSWITCH_NAME}-v1001 fake switch 
+    sudo ip link add ${TUNNSWITCH_NAME}-${SWITCH2}a type veth peer name ${TUNNSWITCH_NAME}-${SWITCH2}b
+    sudo ip link set ${TUNNSWITCH_NAME}-${SWITCH2}a up
+    sudo ip link set ${TUNNSWITCH_NAME}-${SWITCH2}b up
+    sudo ovs-vsctl add-port ${SWITCH2} ${TUNNSWITCH_NAME}-${SWITCH2}a
+    sudo ovs-vsctl add-port ${TUNNSWITCH_NAME} ${TUNNSWITCH_NAME}-${SWITCH2}b
+    sudo ovs-vsctl set port ${TUNNSWITCH_NAME}-${SWITCH1}b trunk=1001,1002
+
+fi
+
+echo "-- Establishing tunnel to $TUNN_DST..."
+sudo ovs-vsctl add-port ${TUNNSWITCH_NAME} tun-$TUNN_DST -- set Interface tun-$TUNN_DST type=gre options:remote_ip=$TUNN_DST
+
+sudo ovs-vsctl set port tun-$TUNN_DST trunk=1000,1001,1002
+
+
+
+echo "-- ...done."
