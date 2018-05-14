@@ -1178,8 +1178,13 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
 
  <exec seq="vlan-net" type="verbatim">
 source /root/bin/admin-openrc.sh        
-openstack network create --share --provider-physical-network vlan --provider-network-type vlan --provider-segment 555 mgmt
-        openstack subnet create --network mgmt --gateway 10.95.254.2 --dns-nameserver 8.8.8.8 --subnet-range 10.95.254.0/24 --allocation-pool start=10.95.254.200,end=10.95.254.254 submgmt
+openstack network create --share --provider-physical-network vlan --provider-network-type vlan --provider-segment 1001 mgmt
+        openstack subnet create --network mgmt --gateway 10.0.2.2 --dns-nameserver 8.8.8.8 --subnet-range 10.0.2.0/24 --allocation-pool start=10.0.2.200,end=10.0.2.254 submgmt
+
+        # Create virtual machine
+        mkdir -p /root/keys
+        openstack keypair create vm1 > /root/keys/vm1
+        openstack server create --flavor m1.tiny --image cirros-0.3.4-x86_64-vnx vm1 --nic net-id=mgmt --key-name vm1
 </exec>
 <!-- GREDOS -->
 
