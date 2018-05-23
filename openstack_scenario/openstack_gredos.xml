@@ -74,7 +74,7 @@ Copyright (C) 2017 Departamento de Ingenieria de Sistemas Telematicos (DIT)
       <ipv4>dhcp</ipv4>
     </if>
 <!-- GREDOS -->
-    <route type="ipv4" gw="10.0.10.1">138.4.7.128/25</route>
+    <route type="ipv4" gw="10.0.10.2">10.102.237.0/24</route>
 <!-- GREDOS -->
     <!-- Copy /etc/hosts file -->
     <filetree seq="on_boot" root="/root/">conf/hosts</filetree>
@@ -793,6 +793,13 @@ Copyright (C) 2017 Departamento de Ingenieria de Sistemas Telematicos (DIT)
         openstack security group list
         echo "Command: openstack security group rule list"
         openstack security group rule list
+    </exec>
+
+
+    <exec seq="on_boot" type="verbatim">
+        # Change ExtNet interface MTU to communicate with OSM without problem
+        ifconfig eth2 mtu 1450
+        sed -i -e '/iface eth2 inet static/a \   mtu 1450' /etc/network/interfaces
     </exec>
 
 <!-- GREDOS -->

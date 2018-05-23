@@ -103,6 +103,9 @@ sudo ovs-vsctl add-port ${TUNNSWITCH_NAME} tun-$TUNN_DST -- set Interface tun-$T
 
 sudo ovs-vsctl set port tun-$TUNN_DST trunk=1000,1001,1002
 
+#Create route to OSM 
+echo "-- Create route to OSM lxcs..."
+sudo ip r add 10.102.237.0/24 dev ExtNet via 10.0.10.2
 
 
 echo "-- ...done."

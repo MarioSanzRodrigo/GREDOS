@@ -78,7 +78,16 @@ sudo ovs-vsctl --may-exist add-br ${SWITCH1}
 sudo ovs-vsctl --may-exist add-br ${SWITCH2}
 sudo ip link set ${SWITCH1} up
 sudo ip link set ${SWITCH2} up
-sudo ip addr add 10.0.10.2/24 dev ${SWITCH1}
+
+
+sudo ip link add ${SWITCH1}a type veth peer name ${SWITCH1}b
+sudo ip link set ${SWITCH1}a up
+sudo ip link set ${SWITCH1}b up
+sudo ovs-vsctl add-port ${SWITCH1} ${SWITCH1}b
+sudo ip addr add 10.0.10.2/24 dev ${SWITCH1}a
+sudo ifconfig ${SWITCH1}a mtu 1450
+sudo ip link set ${SWITCH1} up
+#sudo ip addr add 10.0.10.2/24 dev ${SWITCH1}
 
 sudo ip link add ${SWITCH2}a type veth peer name ${SWITCH2}b
 sudo ip link set ${SWITCH2}a up
