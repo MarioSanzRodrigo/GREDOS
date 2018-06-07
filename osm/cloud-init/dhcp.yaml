@@ -1,0 +1,21 @@
+#cloud-config
+manage_etc_hosts: true
+runcmd:
+  - echo prueba > /root/fichero.txt
+  - sed -i 's/"1"/"0"/g' /etc/apt/apt.conf.d/20auto-upgrades
+  - echo 'auto ens4\niface ens4 inet static\n address 10.0.0.155\n netmask 255.255.255.0\n broadcast 10.0.0.255' | tee /etc/network/interfaces.d/ens4.cfg > /dev/null
+  - ifup ens4
+  - echo "INTERFACES='ens4'" > /etc/default/isc-dhcp-server
+  - echo "ddns-update-style none;" > /etc/dhcp/dhcpd.conf
+  - echo "default-lease-time 604800;" >> /etc/dhcp/dhcpd.conf
+  - echo "max-lease-time 604800;" >> /etc/dhcp/dhcpd.conf
+  - echo "subnet 10.0.0.0 netmask 255.255.255.0 {}" >> /etc/dhcp/dhcpd.conf
+  - echo "subnet 10.1.11.0 netmask 255.255.255.0 {">> /etc/dhcp/dhcpd.conf
+  - echo "  range 10.1.11.10 10.1.11.30;">> /etc/dhcp/dhcpd.conf
+  - echo "  option routers 10.1.11.254;">> /etc/dhcp/dhcpd.conf
+  - echo "  option domain-name-servers 8.8.8.8;}">> /etc/dhcp/dhcpd.conf
+  - service isc-dhcp-server start
+  - echo 1 > /proc/sys/net/ipv4/ip_forward
+    #- ip r del default
+    #To VNFs
+    #- ip r add default dev ens4

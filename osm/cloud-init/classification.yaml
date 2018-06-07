@@ -1,0 +1,13 @@
+#cloud-config
+manage_etc_hosts: true
+runcmd:
+  - echo prueba > /root/fichero.txt
+  - sed -i 's/"1"/"0"/g' /etc/apt/apt.conf.d/20auto-upgrades
+  - echo 'auto ens4\niface ens4 inet dhcp' | tee /etc/network/interfaces.d/ens4.cfg > /dev/null
+  - ifup ens4
+  - echo 'auto ens5\niface ens5 inet dhcp' | tee /etc/network/interfaces.d/ens5.cfg > /dev/null
+  - ifup ens5
+  - echo 1 > /proc/sys/net/ipv4/ip_forward
+  - ifconfig ens4 down
+  - ip link set ens4 address 1a:1a:1a:1a:1a:1a
+  - ifconfig ens4 up

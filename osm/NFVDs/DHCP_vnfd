@@ -1,0 +1,51 @@
+  id: "DHCP_vnfd"
+  name: "DHCP_vnfd"
+  short-name: "DHCP_vnfd"
+  vendor: "OSM"
+  logo: "logo.png"
+  description: "DHCP vnf"
+  version: "1.0"
+  vnf-configuration: {}
+  mgmt-interface: 
+     cp: "eth0"
+  connection-point: 
+     - 
+       name: "eth0"
+       type: "VPORT"
+     - 
+       name: "eth1"
+       type: "VPORT"
+  vdu: 
+     - 
+       id: "DHCP-VM"
+       name: "DHCP-VM"
+       description: "DHCP-VM"
+       count: 1
+       vm-flavor: 
+          vcpu-count: 1
+          memory-mb: 512
+          storage-gb: 3
+       guest-epa: 
+          cpu-pinning-policy: "ANY"
+       image: "cirros034"
+       cloud-init-file: "dhcp.yaml"
+       supplemental-boot-data: 
+          boot-data-drive: "false"
+       interface: 
+          - 
+            name: "ens3"
+            position: 1
+            type: "EXTERNAL"
+            external-connection-point-ref: "eth0"
+            virtual-interface: 
+               type: "VIRTIO"
+            floating-ip-needed: "false"
+          - 
+            name: "ens4"
+            position: 2
+            type: "EXTERNAL"
+            external-connection-point-ref: "eth1"
+            virtual-interface: 
+               type: "VIRTIO"
+            floating-ip-needed: "false"
+  service-function-chain: "UNAWARE"

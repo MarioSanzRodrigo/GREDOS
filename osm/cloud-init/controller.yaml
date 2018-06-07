@@ -1,0 +1,25 @@
+#cloud-config
+manage_etc_hosts: true
+runcmd:
+  - exec 1>/var/log/configuration_script.out 2>&1
+  - echo prueba > /root/fichero.txt
+  - sed -i 's/"1"/"0"/g' /etc/apt/apt.conf.d/20auto-upgrades
+  - echo 'auto ens4\niface ens4 inet dhcp' | tee /etc/network/interfaces.d/ens4.cfg > /dev/null 
+  - ifup ens4
+  - rm /root/floodlight-java8/residential/residential.conf
+  # Insert variables
+  #- echo -n "{\"gw_port\"= X_gw_port," >> /root/floodlight-java8/residential/residential.conf
+  #- echo -n "\"gw_mac\"= \"X_gw_mac\"," >> /root/floodlight-java8/residential/residential.conf
+  #- echo -n "\"res_net_vlanid\"= TVlanID," >> /root/floodlight-java8/residential/residential.conf
+  #- echo -n "\"default_user_mac\"= \"X_default_user_mac\"}" >> /root/floodlight-java8/residential/residential.conf
+  - echo -n "{\"gw_port\"= 11," >> /root/floodlight-java8/residential/residential.conf
+  - echo -n "\"gw_mac\"= \"1a:1a:1a:1a:1a:1a\"," >> /root/floodlight-java8/residential/residential.conf
+  - echo -n "\"res_net_vlanid\"= 11," >> /root/floodlight-java8/residential/residential.conf
+  - echo -n "\"default_user_mac\"= \"68:eb:ae:68:eb:a1\"}" >> /root/floodlight-java8/residential/residential.conf
+  - sed -i 's/=/:/g' /root/floodlight-java8/residential/residential.conf
+  - cd /root/floodlight-java8
+  - ant
+  - nohup java -jar /root/floodlight-java8/target/floodlight.jar &
+  - sleep 20
+  - cd /root/ManagementLayer
+  - python boot.py &

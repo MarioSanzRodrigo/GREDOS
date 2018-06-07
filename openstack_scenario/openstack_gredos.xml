@@ -70,6 +70,8 @@ Copyright (C) 2017 Departamento de Ingenieria de Sistemas Telematicos (DIT)
     <if id="2" net="ExtNet">
       <ipv4>10.0.10.11/24</ipv4>
     </if>
+    <if id="3" net="VlanNet">
+    </if>
     <if id="9" net="virbr0">
       <ipv4>dhcp</ipv4>
     </if>
@@ -1192,6 +1194,49 @@ openstack network create --share --provider-physical-network vlan --provider-net
         mkdir -p /root/keys
         openstack keypair create vm1 > /root/keys/vm1
         openstack server create --flavor m1.tiny --image cirros-0.3.4-x86_64-vnx vm1 --nic net-id=mgmt --key-name vm1
+</exec>
+
+
+
+    <exec seq="create-vMando" type="verbatim">
+
+	# This part deploys the networks of vMando
+
+        source /root/bin/admin-openrc.sh
+	###############################
+	#Parameters
+	###############################
+	#VLANIDs variables - Change them to change the Residential network scenario - Dont forget to run the config_banana.py script in bananapi
+	TVlanID=11
+	OFVlanID=201
+	X_gw_port=11
+	X_gw_mac=1a:1a:1a:1a:1a:1a
+	X_default_user_mac=68:eb:ae:68:eb:a1
+	###############################
+	echo $TVlanID
+        # Create vlan based networks and subnetworks
+        openstack network create --share --provider-physical-network vlan --provider-network-type vlan --provider-segment $TVlanID vlan$TVlanID
+        openstack network create --share --provider-physical-network vlan --provider-network-type vlan --provider-segment $OFVlanID vlan$OFVlanID
+        openstack subnet create --network vlan$TVlanID --gateway 10.1.$TVlanID.1 --dns-nameserver 8.8.8.8 --subnet-range 10.1.$TVlanID.0/24 --allocation-pool start=10.1.$TVlanID.2,end=10.1.$TVlanID.40 subvlan$TVlanID
+        openstack subnet create --network vlan$OFVlanID --gateway 10.2.$OFVlanID.87 --dns-nameserver 8.8.8.8 --subnet-range 10.2.$OFVlanID.0/24 --allocation-pool start=10.2.$OFVlanID.29,end=10.2.$OFVlanID.30 subvlan$OFVlanID
+
+
+        # Create network
+        openstack network create Rnet$TVlanID
+        openstack subnet create --network Rnet$TVlanID --gateway 10.3.$TVlanID.1 --dns-nameserver 8.8.8.8 --subnet-range 10.3.$TVlanID.0/24 --allocation-pool start=10.3.$TVlanID.8,end=10.3.$TVlanID.100 subRnet$TVlanID
+        openstack network create VNFs$TVlanID
+        openstack subnet create --network VNFs$TVlanID --dns-nameserver 8.8.8.8 --subnet-range 10.0.0.0/24 --allocation-pool start=10.0.0.10,end=10.0.0.100 subVNFs$TVlanID
+
+        openstack network create services$TVlanID
+        openstack subnet create --network services$TVlanID --dns-nameserver 8.8.8.8 --subnet-range 10.50.0.0/24 --allocation-pool start=10.50.0.10,end=10.50.0.100 subservices$TVlanID
+
+        # Create router
+        openstack router create r$TVlanID
+        openstack router set r$TVlanID --external-gateway ExtNet
+        openstack router add subnet r$TVlanID subRnet$TVlanID
+
+	# The rest you have to do it in OSM
+
 </exec>
 <!-- GREDOS -->
 
