@@ -1,0 +1,14 @@
+
+auto lo
+iface lo inet loopback
+ 
+ 
+auto vlan10
+iface vlan10 inet static
+   address 10.1.10.155
+   netmask 255.255.255.0
+   vlan_raw_device eth2
+
+ 
+auto eth3
+iface eth3 inet dhcp

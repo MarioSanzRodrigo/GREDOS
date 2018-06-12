@@ -4,7 +4,13 @@ iface lo inet loopback
 
 auto vlan10
 iface vlan10 inet static
-   address 10.0.1.254
+   address 10.1.10.254
+   netmask 255.255.255.0
+   vlan_raw_device eth1
+
+auto vlan200
+iface vlan200 inet static
+   address 10.2.200.30
    netmask 255.255.255.0
    vlan_raw_device eth1
 
@@ -13,6 +19,12 @@ iface vlan20 inet static
    address 10.0.2.254
    netmask 255.255.255.0
    vlan_raw_device eth1
+
+auto vlan10dhcp
+iface vlan10dhcp inet static
+   address 10.1.10.155
+   netmask 255.255.255.0
+   vlan_raw_device eth2
 
 auto vlan12
 iface vlan12 inet static

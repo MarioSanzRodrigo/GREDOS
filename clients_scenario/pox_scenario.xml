@@ -2,15 +2,12 @@
 
 <!--
 
-~~~~~~~~~~~~~~~~~~~~
-VNX Sample scenarios
-~~~~~~~~~~~~~~~~~~~~
-
-Name:        cloudtrust
-Description: 
+Name:  pox_escenario
+Description: Pox scenario from GREDOS Project
 This file is part of the Virtual Networks over LinuX (VNX) Project distribution. 
 (www: http://www.dit.upm.es/vnx - e-mail: vnx@dit.upm.es) 
 
+Author: Carlos Vega García
 Departamento de Ingenieria de Sistemas Telematicos (DIT)
 Universidad Politecnica de Madrid
 SPAIN
@@ -31,18 +28,16 @@ SPAIN
      <console id="1" display="yes"/>
     </vm_defaults>
   </global>
-  
-  <!--<net name="s1" mode="openvswitch" hwaddr="82:d7:6f:b0:6d:48" controller="tcp:127.0.0.1:6653" of_version="OpenFlow13" />
-  <net name="s2" mode="openvswitch" hwaddr="82:d7:6f:b0:6d:49" />-->
+ 
+  <!-- NETWORKS - OVS --> 
   <net name="s1" mode="openvswitch" external="usbeth9" />
   <net name="s2" mode="openvswitch" external="usbeth10" />
-  <net name="s3" mode="openvswitch" controller="tcp:10.0.2.30:6633">
+  <net name="s3" mode="openvswitch" controller="tcp:10.2.200.30:6633">
     <connection name='s3-s2' net='s2'/>
   </net>
   <net name="Inet" mode="openvswitch"/>
-  <net name="virbr0" mode="virtual_bridge" managed="no"/>
  
-  <!-- END DEVICE 1 -->
+  <!-- CLIENTS --> 
   <vm name="client1" type="lxc" subtype="" os="" arch="x86_64">
     <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
     <mem>512M</mem>
@@ -59,7 +54,6 @@ SPAIN
     </exec>
   </vm>
 
-  <!-- END DEVICE 2 -->
   <vm name="client2" type="lxc" subtype="" os="" arch="x86_64">
     <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
     <mem>512M</mem>
@@ -76,7 +70,6 @@ SPAIN
     </exec>
   </vm>
 
-  <!-- END DEVICE 3 -->
   <vm name="client3" type="lxc" subtype="" os="" arch="x86_64">
     <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
     <mem>512M</mem>
@@ -99,72 +92,52 @@ SPAIN
    <if id="2" net="s3" >
       <mac>14:fe:b5:14:fe:b3</mac>
     </if>
-   <!--<if id="3" net="virbr0">
-      <mac>00:02:4b:00:02:4d</mac>
-      <ipv4>dhcp</ipv4>
-    </if>-->
    <if id="1" net="Inet" >
       <mac>14:fe:b5:14:fe:b9</mac>
       <ipv4>10.0.10.11/24</ipv4>
     </if>
-
+    <route type="ipv4" gw="10.0.10.1">default</route>    
     <forwarding type="ip" />
     <console id="1" display="yes"/>
-    <filetree seq="on_boot" root="/etc/network/">conf/SubInterfaces/test/interfaces</filetree>
-    <filetree seq="on_boot" root="/etc/default/">conf/DHCPRelay/test/isc-dhcp-relay</filetree>
-    <filetree seq="on_boot" root="/home/cloudtrust/NAT/">conf/NAT/nat_test.sh</filetree>
-
-
+    <!-- Create VLANs 10 and 200 -->
+    <filetree seq="on_boot" root="/etc/network/">conf/SubInterfaces/cloud/interfaces</filetree>
     <exec seq="start-all" type="verbatim" ostype="system">
-        bash /home/cloudtrust/NAT/nat_test.sh;
-        ifup vlan10;
-        ip addr add 10.0.10.11/24 dev eth1
-	<!-- Metidos en el filesystem directamente
+       	<!-- Installed in filesystem:
 	apt-get update -y
 	apt-get install -y vlan build-essential ant maven python-dev default-jre dnsmasq openjdk-8-jdk
  	-->
-	vconfig add eth2 200
-	ip addr add 10.0.2.30/24 dev vlan200
-	ifconfig vlan200 up
+ 	ifup vlan10;
+	ifup vlan200;
 	iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
-	cd /root/pox
-	nohup /root/pox/pox.py  pox.forwarding.l2_learning openflow.of_01 --address=10.0.2.30 --port=6633 &amp;
+	nohup /root/pox/pox.py  pox.forwarding.l2_learning openflow.of_01 --address=10.2.200.30 --port=6633 &amp;
 	service dnsmasq stop
-	ip r add default via 10.0.10.1 dev eth1
 
     </exec>
   </vm>
 
 
-  <!-- dhcp -->
+  <!-- DHCP -->
   <vm name="dhcp" type="lxc" subtype="" os="" arch="x86_64">
     <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
-   <if id="3" net="virbr0">
-      <mac>00:02:4b:00:02:4f</mac>
-      <ipv4>dhcp</ipv4>
-    </if>
 <if id="2" net="s3" >
       <mac>14:fe:b5:14:fe:c4</mac>
     </if>
     <forwarding type="ip" />
     <console id="1" display="yes"/>
-
+    <!-- Create VLAN 10 -->
+    <filetree seq="on_boot" root="/etc/network/">conf/SubInterfaces/dhcp/interfaces</filetree>
+    <!-- Create DHCP configuration -->
+    <filetree seq="on_boot" root="/tmp/dnsmasq.conf">conf/DHCPServer/dnsmasq.conf</filetree>
     <exec seq="start-all" type="verbatim" ostype="system">
-        bash /home/cloudtrust/NAT/nat_test.sh;
-	vconfig add eth2 10
-	ip addr add 10.0.1.155/24 dev eth2.10
-	ifconfig eth2.10 up
-	<!-- Metidos en el filesystem directamente
+        <!-- Installed in filesystem:
 	apt-get update -y
 	apt-get install -y vlan build-essential ant maven python-dev default-jre dnsmasq openjdk-8-jdk
  	-->
-	echo interface=eth2.10 >> /etc/dnsmasq.conf
-	echo dhcp-range=10.0.1.10,10.0.1.40,24h >> /etc/dnsmasq.conf
-	echo dhcp-option=3,10.0.1.254 >> /etc/dnsmasq.conf
-	echo log-queries 
-        echo log-facility=/var/log/dnsmasq.log
+	less /tmp/dnsmasq.conf >> /etc/dnsmasq.conf	
+	rm /tmp/dnsmasq.conf
+	ifup vlan10
+	ip r add default via 10.1.10.254
 	service dnsmasq restart
-
     </exec>
   </vm>
 
@@ -174,10 +147,9 @@ SPAIN
        <ipv4>10.0.10.1/24</ipv4>
     </hostif>
     <exec seq="on_boot" type="verbatim" ostype="system">
-       #ovs-vsctl add-port s1 eno1;
-       ip r add 10.0.1.0/24 dev Inet via 10.0.10.11
-       ip r add 10.0.2.0/24 dev Inet
-       <!--Take down and up the conection interfaces to avoid problems-->
+       ip r add 10.1.10.0/24 dev Inet via 10.0.10.11
+       ip r add 10.2.200.0/24 dev Inet
+       <!--Take up the connection interfaces to avoid problems-->
        ifconfig usbeth10 up;
        ifconfig usbeth9 up;
        ifconfig Inet up;
