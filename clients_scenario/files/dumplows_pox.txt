@@ -1,8 +1,6 @@
 When ping 8.8.8.8 from client1
 127 root@bananapi ~ # ovs-ofctl dump-flows br0                               :(
 NXST_FLOW reply (xid=0x4):
- cookie=0x0, duration=15.920s, table=0, n_packets=133, n_bytes=10270, idle_timeout=10, hard_timeout=30, idle_age=0, priority=65535,tcp,in_port=1,vlan_tci=0x0000,dl_src=68:eb:ae:68:eb:a2,dl_dst=18:d6:c7:14:f4:e8,nw_src=10.1.10.24,nw_dst=10.1.10.1,nw_tos=16,tp_src=34788,tp_dst=22 actions=LOCAL
- cookie=0x0, duration=15.912s, table=0, n_packets=103, n_bytes=22462, idle_timeout=10, hard_timeout=30, idle_age=0, priority=65535,tcp,in_port=LOCAL,vlan_tci=0x0000,dl_src=18:d6:c7:14:f4:e8,dl_dst=68:eb:ae:68:eb:a2,nw_src=10.1.10.1,nw_dst=10.1.10.24,nw_tos=16,tp_src=22,tp_dst=34788 actions=output:1
  cookie=0x0, duration=2.329s, table=0, n_packets=3, n_bytes=294, idle_timeout=10, hard_timeout=30, idle_age=0, priority=65535,icmp,in_port=1,vlan_tci=0x0000,dl_src=68:eb:ae:68:eb:a1,dl_dst=14:fe:b5:14:fe:b3,nw_src=10.1.10.23,nw_dst=8.8.8.8,nw_tos=0,icmp_type=8,icmp_code=0 actions=output:3
  cookie=0x0, duration=2.316s, table=0, n_packets=3, n_bytes=294, idle_timeout=10, hard_timeout=30, idle_age=0, priority=65535,icmp,in_port=3,vlan_tci=0x0000,dl_src=14:fe:b5:14:fe:b3,dl_dst=68:eb:ae:68:eb:a1,nw_src=8.8.8.8,nw_dst=10.1.10.23,nw_tos=0,icmp_type=0,icmp_code=0 actions=output:1
  cookie=0x0, duration=8.315s, table=0, n_packets=1, n_bytes=56, idle_timeout=10, hard_timeout=30, idle_age=8, priority=65535,arp,in_port=3,vlan_tci=0x0000,dl_src=14:fe:b5:14:fe:c4,dl_dst=68:eb:ae:68:eb:a1,arp_spa=10.1.10.155,arp_tpa=10.1.10.23,arp_op=1 actions=output:1
@@ -12,8 +10,6 @@ NXST_FLOW reply (xid=0x4):
 When dhclient from client1
 root@bananapi ~ # ovs-ofctl dump-flows br0
 NXST_FLOW reply (xid=0x4):
- cookie=0x0, duration=6.390s, table=0, n_packets=39, n_bytes=2966, idle_timeout=10, hard_timeout=30, idle_age=0, priority=65535,tcp,in_port=1,vlan_tci=0x0000,dl_src=68:eb:ae:68:eb:a2,dl_dst=18:d6:c7:14:f4:e8,nw_src=10.1.10.24,nw_dst=10.1.10.1,nw_tos=16,tp_src=34788,tp_dst=22 actions=LOCAL
- cookie=0x0, duration=6.385s, table=0, n_packets=31, n_bytes=10162, idle_timeout=10, hard_timeout=30, idle_age=0, priority=65535,tcp,in_port=LOCAL,vlan_tci=0x0000,dl_src=18:d6:c7:14:f4:e8,dl_dst=68:eb:ae:68:eb:a2,nw_src=10.1.10.1,nw_dst=10.1.10.24,nw_tos=16,tp_src=22,tp_dst=34788 actions=output:1
  cookie=0x0, duration=5.015s, table=0, n_packets=1, n_bytes=90, idle_timeout=10, hard_timeout=30, idle_age=5, priority=65535,udp,in_port=LOCAL,vlan_tci=0x0000,dl_src=18:d6:c7:14:f4:e8,dl_dst=14:fe:b5:14:fe:b3,nw_src=10.1.10.1,nw_dst=147.156.7.50,nw_tos=192,tp_src=123,tp_dst=123 actions=output:3
  cookie=0x0, duration=4.989s, table=0, n_packets=1, n_bytes=90, idle_timeout=10, hard_timeout=30, idle_age=4, priority=65535,udp,in_port=3,vlan_tci=0x0000,dl_src=14:fe:b5:14:fe:b3,dl_dst=18:d6:c7:14:f4:e8,nw_src=147.156.7.50,nw_dst=10.1.10.1,nw_tos=192,tp_src=123,tp_dst=123 actions=LOCAL
  cookie=0x0, duration=3.345s, table=0, n_packets=1, n_bytes=343, idle_timeout=10, hard_timeout=30, idle_age=3, priority=65535,udp,in_port=3,vlan_tci=0x0000,dl_src=14:fe:b5:14:fe:c4,dl_dst=68:eb:ae:68:eb:a1,nw_src=10.1.10.155,nw_dst=10.1.10.23,nw_tos=192,tp_src=67,tp_dst=68 actions=output:1
