@@ -1,7 +1,7 @@
 import requests, sys, os, json
 
 # Parameters to locate the RENEMA App API.
-server = 'http://10.0.10.126:5000'
+server = 'http://10.2.200.30:5000'
 url_parentalcontrol = '/renemaapps/parentalcontrol/policies'
 url_networkstatus = '/renemaapps/networkstatus'
 headers = {'content-type': 'application/json'}

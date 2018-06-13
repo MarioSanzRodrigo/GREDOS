@@ -2,15 +2,12 @@
 
 <!--
 
-~~~~~~~~~~~~~~~~~~~~
-VNX Sample scenarios
-~~~~~~~~~~~~~~~~~~~~
-
-Name:        cloudtrust
-Description: 
+Name:  floodlight_all_virtual_scenario
+Description: Floodlight virtual scenario from GREDOS Project
 This file is part of the Virtual Networks over LinuX (VNX) Project distribution. 
 (www: http://www.dit.upm.es/vnx - e-mail: vnx@dit.upm.es) 
 
+Author: Carlos Vega García
 Departamento de Ingenieria de Sistemas Telematicos (DIT)
 Universidad Politecnica de Madrid
 SPAIN
@@ -33,10 +30,9 @@ SPAIN
   </global>
   
 
-  <net name="s1" mode="openvswitch"  controller="tcp:10.0.2.30:6653" />
+  <net name="s1" mode="openvswitch"  controller="tcp:10.2.200.30:6653" />
   <net name="dhcp-net" mode="openvswitch" />
   <net name="Inet" mode="openvswitch"/>
-  <net name="virbr0" mode="virtual_bridge" managed="no"/>
  
   <!-- END DEVICE 1 -->
   <vm name="client1" type="lxc" subtype="" os="" arch="x86_64">
@@ -91,34 +87,33 @@ SPAIN
       <ipv4>10.0.10.11/24</ipv4>
     </if>
     <if id="2" net="s1" >
-      <mac>14:fe:b5:14:fe:b3</mac>
+      <mac>1a:1a:1a:1a:1a:1a</mac>
     </if>
    <if id="4" net="dhcp-net" >
       <mac>14:fe:b5:14:fe:23</mac>
-      <ipv4>10.1.1.1/24</ipv4>
+      <ipv4>10.0.0.254/24</ipv4>
     </if>
+    <route type="ipv4" gw="10.0.10.1">default</route>
 
     <forwarding type="ip" />
     <console id="1" display="yes"/>
-    <filetree seq="on_boot" root="/etc/network/">conf/SubInterfaces/test/interfaces</filetree>
-    <filetree seq="on_boot" root="/etc/default/">conf/DHCPRelay/test/isc-dhcp-relay</filetree>
-    <filetree seq="on_boot" root="/home/cloudtrust/NAT/">conf/NAT/nat_test.sh</filetree>
+    <filetree seq="on_boot" root="/etc/network/">conf/SubInterfaces/cloud/interfaces</filetree>
+    <filetree seq="on_boot" root="/etc/default/">conf/DHCPRelay/cloud/isc-dhcp-relay</filetree>
     <filetree seq="on_boot" root="/root/floodlight-java8/">../others/floodlight-java8/</filetree>
     <filetree seq="on_boot" root="/root/ManagementLayer/">../others/ManagementLayer/</filetree>
 
     <exec seq="start-all" type="verbatim" ostype="system">
-        bash /home/cloudtrust/NAT/nat_test.sh;
-        ifup vlan10;
-	<!--filesystem 
+       	<!-- Installed in filesystem:
 	apt-get update -y
 	apt-get install -y vlan build-essential ant maven python-dev default-jre dnsmasq openjdk-8-jdk
  	-->
-	vconfig add eth2 200
-	ip addr add 10.0.2.30/24 dev vlan200
-	ifconfig vlan200 up
+	exec 1>/var/log/configuration_script.out 2>&amp;1
+ 	ifup vlan10;
+	ifup vlan200;
 	iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
+
 	<!--sudo ovs-ofctl show s1 in host to see WAN port and change gw_port in next line-->
-	echo {\"gw_port\": 4, \"gw_mac\": \"14:fe:b5:14:fe:b3\", \"res_net_vlanid\": 10, \"default_user_mac\": \"68:eb:ae:68:eb:a1\"} > /root/floodlight-java8/residential/residential.conf
+	echo {\"gw_port\": 4, \"gw_mac\": \"1a:1a:1a:1a:1a:1a\", \"res_net_vlanid\": 10, \"default_user_mac\": \"68:eb:ae:68:eb:a1\"} > /root/floodlight-java8/residential/residential.conf
 	cd /root/floodlight-java8
 	ant
 	nohup java -jar /root/floodlight-java8/target/floodlight.jar &amp;
@@ -126,10 +121,8 @@ SPAIN
         cd /root/ManagementLayer
 	nohup python boot.py &amp;
 	service dnsmasq stop
+
 	ip r add default via 10.0.10.1 dev eth1
-	echo "SERVERS='10.1.1.155'" > /etc/default/isc-dhcp-relay
-	echo "INTERFACES='vlan10 eth4'" >> /etc/default/isc-dhcp-relay
-	echo "OPTIONS=''" >> /etc/default/isc-dhcp-relay
         service isc-dhcp-relay start
 
     </exec>
@@ -141,39 +134,29 @@ SPAIN
     <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
 <if id="2" net="dhcp-net" >
       <mac>14:fe:b5:14:fe:c4</mac>
-	<ipv4>10.1.1.155/24</ipv4>
+	<ipv4>10.0.0.155/24</ipv4>
     </if>
     <forwarding type="ip" />
     <console id="1" display="yes"/>
-
+    <filetree seq="on_boot" root="/etc/dhcp/">conf/DHCPServer/dhcp/dhcpd.conf</filetree>
+    <filetree seq="on_boot" root="/etc/default/">conf/DHCPServer/dhcp/isc-dhcp-server</filetree>
     <exec seq="start-all" type="verbatim" ostype="system">
-        bash /home/cloudtrust/NAT/nat_test.sh;
 	<!-- filesystem 
 	apt-get update -y
 	apt-get install -y vlan build-essential ant maven python-dev default-jre dnsmasq openjdk-8-jdk
  	-->
-	echo interface=eth2 >> /etc/dnsmasq.conf
+
+	<!-- DNSMASQ -->
+	<!--echo interface=eth2 >> /etc/dnsmasq.conf
 	echo dhcp-range=10.0.1.10,10.0.1.25,24h >> /etc/dnsmasq.conf
 	echo dhcp-option=3,10.0.1.254 >> /etc/dnsmasq.conf
 	echo log-queries 
         echo log-facility=/var/log/dnsmasq.log
-	service dnsmasq stop
+	service dnsmasq stop -->
 
-
-	echo "INTERFACES='eth2'" > /etc/default/isc-dhcp-server 
-	/etc/dhcp/dhcpd.conf
-
-	echo "ddns-update-style none;" > /etc/dhcp/dhcpd.conf
-	echo "default-lease-time 604800;" >> /etc/dhcp/dhcpd.conf
-	echo "max-lease-time 604800;" >> /etc/dhcp/dhcpd.conf
-
-	echo "subnet 10.1.1.0 netmask 255.255.255.0 {}" >> /etc/dhcp/dhcpd.conf
-
-	echo "subnet 10.0.1.0 netmask 255.255.255.0 {">> /etc/dhcp/dhcpd.conf
-	echo "  range 10.0.1.20 10.0.1.50;">> /etc/dhcp/dhcpd.conf
-	echo "  option routers 10.0.1.254;">> /etc/dhcp/dhcpd.conf
-	echo "  option domain-name-servers 8.8.8.8;}">> /etc/dhcp/dhcpd.conf
-		service isc-dhcp-server start
+	
+	<!-- ISC-DHCP-SERVER -->
+	service isc-dhcp-server start
 	ip r add default dev eth2
 
     </exec>
@@ -185,10 +168,9 @@ SPAIN
        <ipv4>10.0.10.1/24</ipv4>
     </hostif>
     <exec seq="on_boot" type="verbatim" ostype="system">
-       #ovs-vsctl add-port s1 eno1;
-       ip r add 10.0.2.0/24 dev Inet
-       ip r add 10.0.1.0/24 dev Inet via 10.0.10.11
-       <!--Take down and up the conection interfaces to avoid problems-->
+       ip r add 10.2.200.0/24 dev Inet via 10.0.10.11
+       ip r add 10.1.10.0/24 dev Inet via 10.0.10.11
+       <!--Take up the conection interfaces to avoid problems-->
        ifconfig usbeth10 up;
        ifconfig usbeth2 up;
        ifconfig Inet up;

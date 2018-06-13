@@ -1,0 +1,5 @@
+NXST_FLOW reply (xid=0x4):
+ cookie=0x20000000000000, duration=29.507s, table=0, n_packets=29, n_bytes=2842, idle_timeout=5, idle_age=0, priority=1,ip,in_port=2,dl_src=68:eb:ae:68:eb:a2,dl_dst=1a:1a:1a:1a:1a:1a,nw_src=10.1.10.20,nw_dst=8.8.8.8 actions=mod_vlan_vid:10,output:4
+ cookie=0x20000000000000, duration=29.488s, table=0, n_packets=29, n_bytes=2958, idle_timeout=5, idle_age=0, priority=1,ip,in_port=4,dl_vlan=10,dl_src=1a:1a:1a:1a:1a:1a,dl_dst=68:eb:ae:68:eb:a2,nw_src=8.8.8.8,nw_dst=10.1.10.20 actions=strip_vlan,set_queue:3,output:2
+ cookie=0x0, duration=5849.343s, table=0, n_packets=30, n_bytes=3851, idle_age=24, priority=0 actions=CONTROLLER:65535
+
