@@ -1,4 +1,5 @@
 #cloud-config
+hostname: classification11
 manage_etc_hosts: true
 runcmd:
   - echo prueba > /root/fichero.txt
@@ -11,3 +12,7 @@ runcmd:
   - ifconfig ens4 down
   - ip link set ens4 address 1a:1a:1a:1a:1a:1a
   - ifconfig ens4 up
+  - ip r add 10.0.10.0/24 via 10.3.11.1
+  - ip r del default via 10.3.11.1
+  - ip r add default dev ens5
+

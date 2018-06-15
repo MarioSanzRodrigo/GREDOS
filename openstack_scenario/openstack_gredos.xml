@@ -1217,7 +1217,7 @@ openstack network create --share --provider-physical-network vlan --provider-net
         # Create vlan based networks and subnetworks
         openstack network create --share --provider-physical-network vlan --provider-network-type vlan --provider-segment $TVlanID vlan$TVlanID
         openstack network create --share --provider-physical-network vlan --provider-network-type vlan --provider-segment $OFVlanID vlan$OFVlanID
-        openstack subnet create --network vlan$TVlanID --gateway 10.1.$TVlanID.1 --dns-nameserver 8.8.8.8 --subnet-range 10.1.$TVlanID.0/24 --allocation-pool start=10.1.$TVlanID.2,end=10.1.$TVlanID.40 subvlan$TVlanID
+        openstack subnet create --network vlan$TVlanID --gateway 10.1.$TVlanID.1 --dns-nameserver 8.8.8.8 --subnet-range 10.1.$TVlanID.0/24 --allocation-pool start=10.1.$TVlanID.253,end=10.1.$TVlanID.254 subvlan$TVlanID
         openstack subnet create --network vlan$OFVlanID --gateway 10.2.$OFVlanID.87 --dns-nameserver 8.8.8.8 --subnet-range 10.2.$OFVlanID.0/24 --allocation-pool start=10.2.$OFVlanID.29,end=10.2.$OFVlanID.30 subvlan$OFVlanID
 
 
@@ -1227,8 +1227,10 @@ openstack network create --share --provider-physical-network vlan --provider-net
         openstack network create VNFs$TVlanID
         openstack subnet create --network VNFs$TVlanID --dns-nameserver 8.8.8.8 --subnet-range 10.0.0.0/24 --allocation-pool start=10.0.0.10,end=10.0.0.100 subVNFs$TVlanID
 
+
         openstack network create services$TVlanID
         openstack subnet create --network services$TVlanID --dns-nameserver 8.8.8.8 --subnet-range 10.50.0.0/24 --allocation-pool start=10.50.0.10,end=10.50.0.100 subservices$TVlanID
+
 
         # Create router
         openstack router create r$TVlanID
@@ -1238,6 +1240,7 @@ openstack network create --share --provider-physical-network vlan --provider-net
 	# The rest you have to do it in OSM
 
 </exec>
+
 <!-- GREDOS -->
 
 
