@@ -23,7 +23,3 @@ runcmd:
   - ip r add 10.0.10.0/24 via 10.3.11.1
   - ip r del default via 10.3.11.1; ip r add default dev ens4
 
-    #- ip r del default
-    #To VNFs
-    #- ip r add default dev ens4
-

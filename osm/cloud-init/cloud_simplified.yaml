@@ -1,0 +1,23 @@
+#cloud-config
+hostname: cloud11
+manage_etc_hosts: true
+runcmd:
+  - echo prueba > /root/fichero.txt
+  - sed -i 's/"1"/"0"/g' /etc/apt/apt.conf.d/20auto-upgrades
+  - echo 'auto ens4\niface ens4 inet dhcp' | tee /etc/network/interfaces.d/ens4.cfg > /dev/null
+  - ifup ens4
+  - echo 'auto ens5\niface ens5 inet dhcp' | tee /etc/network/interfaces.d/ens5.cfg > /dev/null
+  - ifup ens5
+  - echo 'auto ens6\niface ens6 inet dhcp' | tee /etc/network/interfaces.d/ens6.cfg > /dev/null
+  - ifup ens6
+  - echo "SERVERS='10.0.0.11'" > /etc/default/isc-dhcp-relay
+  - echo "INTERFACES='ens5 ens6'" >> /etc/default/isc-dhcp-relay
+  - echo "OPTIONS=''" >> /etc/default/isc-dhcp-relay
+  - service isc-dhcp-relay start
+  - echo 1 > /proc/sys/net/ipv4/ip_forward
+  - iptables -t nat -A POSTROUTING -o ens3 -j MASQUERADE
+  - rm -rf /root/floodlight-java8
+  - rm -rf /root/ManagementLayer
+  - rm -rf /root/pox
+  - ip r add 10.0.10.0/24 via 10.3.11.1
+
