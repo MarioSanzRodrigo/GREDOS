@@ -431,7 +431,7 @@ Copyright (C) 2017 Departamento de Ingenieria de Sistemas Telematicos (DIT)
 
 
     <!-- STEP 9: Tacker service -->
-    <cmd-seq seq="step9">step91,step92</cmd-seq>
+    <cmd-seq seq="install-tacker">step91,step92</cmd-seq>
 
     <exec seq="step91" type="verbatim">
         apt-get -y install python-pip git
@@ -1527,6 +1527,9 @@ openstack network create --share --provider-physical-network vlan --provider-net
 <!-- GREDOS -->
     <exec seq="on_boot" type="verbatim" ostype="system">
 	ifconfig ExtNet up
+	ifconfig VlanNet up
+	ifconfig usbeth9 up
+	ifconfig usbeth10 up
        ip r add 10.0.1.0/24 dev ExtNet
 	<!-- osm connection -->
 	ip r add 10.95.254.0/24 dev eno1 via 138.4.7.181
