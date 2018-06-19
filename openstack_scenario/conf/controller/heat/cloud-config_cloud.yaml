@@ -7,7 +7,7 @@ runcmd:
 - ifup ens4
 - echo 'auto ens5\niface ens5 inet dhcp' | tee /etc/network/interfaces.d/ens5.cfg > /dev/null
 - ifup ens5
-- echo "SERVERS='10.1.10.155'" > /etc/default/isc-dhcp-relay
+- echo "SERVERS='10.0.0.155'" > /etc/default/isc-dhcp-relay
 - echo "INTERFACES='ens4 ens5'" >> /etc/default/isc-dhcp-relay
 - echo "OPTIONS=''" >> /etc/default/isc-dhcp-relay
 - service isc-dhcp-relay start
