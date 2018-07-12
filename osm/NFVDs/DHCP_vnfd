@@ -27,7 +27,7 @@
           storage-gb: 3
        guest-epa: 
           cpu-pinning-policy: "ANY"
-       image: "cirros034"
+       image: "xenial-server-cloudimg-amd64-vnx-GREDOS"
        cloud-init-file: "dhcp.yaml"
        supplemental-boot-data: 
           boot-data-drive: "false"
