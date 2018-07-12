@@ -7,7 +7,6 @@ Index:
 - [Summary](https://github.com/carlosv5/GREDOS#summary)
 - [Requirements](https://github.com/carlosv5/GREDOS#requirements)
 - [Scenarios](https://github.com/carlosv5/GREDOS#scenarios)
-- [Notes](https://github.com/carlosv5/GREDOS#notes)
 - [Author](https://github.com/carlosv5/GREDOS#author)
 - [References](https://github.com/carlosv5/GREDOS#references)
 
@@ -31,8 +30,7 @@ These scenarios deploy residential network architecture based on SDN and NFV.The
    - [Scenario 3: Floodlight as SDN controller and Banana Pi as Residential Gateway](https://github.com/carlosv5/GREDOS/wiki/floodlight_scenario): this scenario deploy clients and cloud side except from the Banana Pi (physical). Uses the GREDOS project's network application in Floodlight as SDN controller.      
  - [Scenario 4: OpenStack as ISP Cloud](https://github.com/carlosv5/GREDOS/wiki/openstack_gredos): this scenario deploy cloud and client sides except from the Banana Pi (physical). Cloud side is deployed with OpenStack.
  
-## Notes
-
+ 
 ## Author
 
 This project has been developed by [Carlos Vega García](https://es.linkedin.com/in/carlos-vega-garc%C3%ADa-449795150) as a result of a Master's thesis in Universidad Politécnica de Madrid.
