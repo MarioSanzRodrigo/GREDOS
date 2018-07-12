@@ -1,7 +1,7 @@
 # GREDOS Project scenarios
 ***
 
-This repository develop several scenarios to deploy GREDOS project using [Virtual Networks over linuX (VNX)](http://www.dit.upm.es/~vnx/).
+This repository develop several scenarios to deploy the research project GREDOS using [Virtual Networks over linuX (VNX)](http://www.dit.upm.es/~vnx/).
 
 Index:
 - [Summary](https://github.com/carlosv5/GREDOS#summary)
@@ -13,31 +13,30 @@ Index:
 
 
 ## Summary
+Research project GREDOS is developed by Departamento de Ingeniería de Sistemas Telemáticos (DIT) of Escuela Técnica Superior de Ingenieros de Telecomunicación (ETSIT).GREDOS is focused on evolving residential networks to an user-centric software architecture, so, each client of a telecommunications operator can control and modify his home network using mobile applications.
 
-Investigation project GREDOS is developed by Departamento de Ingeniería de Sistemas Telemáticos (DIT) of Escuela Técnica Superior de Ingenieros de Telecomunicación (ETSIT). GREDOS is focused on evolving residential networks to an user centralized software architecture, so, each client of a telecommunications operator could control and modify his home network. For that purpose, residential networks are split in two components: on the one hand, a client application to control the network and devices connected to it, and on the other hand, the server component, based on SDN and NFV technologies.
-
-These scenarios deploy residential network architecture based on SDN and NFV. The scenarios define network’s components: access network, transport network implemented with optical technologies, and operator’s infrastructure (cloud) where services are deployed. The cloud infrastructure is built with OpenStack and runs the SDN controllers which switches the traffic. It also hosts the user network functions: routing, NAT, DHCP, etc, letting change the specialized residential gateway for a white-box switch with OpenvSwitch that understands the SDN controller orders and switch packages in the network.
+These scenarios deploy residential network architecture based on SDN and NFV.The scenarios define network’s components:residential network, access network implemented with optical technologies and operator’s infrastructure (cloud) where services are deployed. For this purpose, innovative technologies as SDN, NFV, cloud computing and optical equipment have been used.
 
 ## Requirements
 
  - VNX installed [(VNX Installation Guide)](http://web.dit.upm.es/vnxwiki/index.php/Vnx-install)
- - Operating System: Ubuntu 14.04 / Ubuntu 16.04 / Ubuntu 17.04
+ - Operating System: Tested in Ubuntu 16.04
  - Hard Drive: 5 GB avaible space (Filesystems size)
  - Memory: 8 GB RAM or more
  - Banana Pi with GREDOS's image installed and configuration
  
  ## Scenarios
- - Clients scenario
-     * [Pox scenario](https://github.com/carlosv5/GREDOS/wiki/pox_scenario): this scenario deploy clients and cloud side except from the Banana Pi (physical). Uses Pox as SDN controllers. Beware of interfaces connections
-      * [Floodlight scenario without Banana Pi](https://github.com/carlosv5/GREDOS/wiki/floodlight_all_virtual_scenario): this scenario deploy clients and cloud side and Banana Pi OVS. Uses Floodlight as SDN controllers
-      * [Floodlight scenario](https://github.com/carlosv5/GREDOS/wiki/floodlight_scenario): this scenario deploy clients and cloud side except from the Banana Pi (physical). Uses Floodlight as SDN controllers. Beware of interfaces connections
-      * [Clients scenario with OpenStack](https://github.com/carlosv5/GREDOS/wiki/openstack_clients_scenario): this scenario deploy clients side except from the Banana Pi (physical). Beware of interfaces connections. It must run with OpenStack scenario at the same time.
- - [Openstack scenario](https://github.com/carlosv5/GREDOS/wiki/openstack_gredos): this scenario deploy cloud side. Beware of interfaces connections. It must run with the previous scenario at the same time.
-
+  - [Scenario 1: Pox as SDN controller and Banana Pi as Residential Gateway](https://github.com/carlosv5/GREDOS/wiki/pox_scenario): this scenario deploy clients and cloud side except from the Banana Pi (physical). Uses the module l2_learning of Pox as SDN controller.
+   - [Scenario 2: Floodlight as SDN controller and OVS as Residential Gateway](https://github.com/carlosv5/GREDOS/wiki/floodlight_all_virtual_scenario): this scenario deploy clients and cloud side and the residential gateway OVS. Uses the GREDOS project's network application in Floodlight as SDN controller.
+   - [Scenario 3: Floodlight as SDN controller and Banana Pi as Residential Gateway](https://github.com/carlosv5/GREDOS/wiki/floodlight_scenario): this scenario deploy clients and cloud side except from the Banana Pi (physical). Uses the GREDOS project's network application in Floodlight as SDN controller.      
+ - [Scenario 4: OpenStack as ISP Cloud](https://github.com/carlosv5/GREDOS/wiki/openstack_gredos): this scenario deploy cloud and client sides except from the Banana Pi (physical). Cloud side is deployed with OpenStack.
+ 
 ## Notes
 
 ## Author
 
-This project has been developed by [Carlos Vega García](https://es.linkedin.com/in/carlos-vega-garc%C3%ADa-449795150).
+This project has been developed by [Carlos Vega García](https://es.linkedin.com/in/carlos-vega-garc%C3%ADa-449795150) as a result of a Master's thesis in Universidad Politécnica de Madrid.
 
 ## References
+* http://oa.upm.es/50230/ - Ricardo Flores's phd thesis with GREDOS's architecture design
+
