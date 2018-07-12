@@ -1110,6 +1110,9 @@ openstack server add floating ip cloud $( openstack floating ip create ExtNet -c
 
 </exec>
 
+    <exec seq="destroy-tacker" type="verbatim">
+	tacker vnf-delete tacker
+    </exec>
 
     <filetree seq="create-tacker2" root="/usr/local/etc/tacker/">conf/controller/tacker/CLOUD_NATD.yaml</filetree>
     <filetree seq="create-tacker2" root="/usr/local/etc/tacker/">conf/controller/tacker/SHAPED.yaml</filetree>
