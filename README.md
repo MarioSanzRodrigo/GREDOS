@@ -32,7 +32,7 @@ These scenarios deploy residential network architecture based on SDN and NFV.The
  - [Scenario 4: OpenStack as ISP Cloud](https://github.com/carlosv5/GREDOS/wiki/openstack_gredos): this scenario deploy cloud and client sides except from the Banana Pi (physical). Cloud side is deployed with OpenStack.
  
  ## BananaPi
-
+You need to understand the Banana Pi's configuration in order to deploy the scenarios 1,3 and 4. [Here](https://github.com/carlosv5/GREDOS/wiki/BananaPi) there is an explanation.
  
 ## Author
 
