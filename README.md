@@ -17,8 +17,9 @@ Research project GREDOS is developed by Departamento de Ingeniería de Sistemas 
 
 These scenarios deploy residential network architecture based on SDN and NFV.The scenarios define network’s components:residential network, access network implemented with optical technologies and operator’s infrastructure (cloud) where services are deployed. For this purpose, innovative technologies as SDN, NFV, cloud computing and optical equipment have been used.
 
+<p align="center">
 <img src="https://github.com/carlosv5/GREDOS/blob/master/img/objective.png" width="80%">
-
+</p>
 
 
 ## Requirements
