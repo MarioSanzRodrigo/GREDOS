@@ -5,10 +5,9 @@
  VNX Sample scenarios
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Name:        openstack_tutorial-ocata
+Name:        openstack_gredos
 
-Description: This is an Openstack tutorial scenario designed to experiment with Openstack free and open-source 
-             software platform for cloud-computing. It is made of four LXC containers: 
+Description: This is an Openstack scenario to deploy GREDOS project. It is made of four LXC containers: 
                - one controller
                - one network node
                - two compute nodes
@@ -17,6 +16,7 @@ Description: This is an Openstack tutorial scenario designed to experiment with 
                   http://docs.openstack.org/mitaka/networking-guide/scenario-classic-ovs.html
 
 Author:      David Fernandez (david@dit.upm.es)
+	     Carlos Vega García (Master's thesis)
 
 This file is part of the Virtual Networks over LinuX (VNX) Project distribution. 
 (www: http://www.dit.upm.es/vnx - e-mail: vnx@dit.upm.es) 
