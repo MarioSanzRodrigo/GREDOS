@@ -3,7 +3,7 @@
 
 This repository develop several scenarios to deploy the research project GREDOS using [Virtual Networks over linuX (VNX)](http://www.dit.upm.es/~vnx/).
 
-Index:
+## Index
 - [Summary](https://github.com/carlosv5/GREDOS#summary)
 - [Requirements](https://github.com/carlosv5/GREDOS#requirements)
 - [Scenarios](https://github.com/carlosv5/GREDOS#scenarios)
