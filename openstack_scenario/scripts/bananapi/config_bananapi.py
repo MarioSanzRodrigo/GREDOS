@@ -25,7 +25,7 @@ def lauch():
                         TVlanID = raw_input('\n\t*Introduce the traffic VLAN ID:')
                         OFVlanID = raw_input('\n\t*Introduce the OpenFlow VLAN ID:')
                         trafficSubnet = "10.1."+TVlanID+".0/24"
-                        OFSubnet = "10.2."+OFlanID+".0/24"
+                        OFSubnet = "10.2."+OFVlanID+".0/24"
 
                         # Read in the file
                         with open(config_file_path, 'r') as file :
