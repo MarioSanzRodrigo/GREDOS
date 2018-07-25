@@ -9,6 +9,7 @@
 #
 # Authors: David Fernández (david@dit.upm.es)
 #          Raúl Álvarez (raul.alvarez.pinilla@alumnos.upm.es)
+#          Carlos Vega (carlos.vegagarci@alumnos.upm.es)
 #
 # Copyright (C) 2015 DIT-UPM
 #           Departamento de Ingenieria de Sistemas Telematicos
@@ -35,13 +36,13 @@
 #
 # Configuration
 #
-NAME=ONOS-vRouter
+NAME=rootfs_lxc64_sdn
 BASEROOTFSNAME=vnx_rootfs_lxc_ubuntu64-16.04-v025
 ROOTFSNAME=$BASEROOTFSNAME-$NAME
 ROOTFSLINKNAME="rootfs_lxc_ubuntu64-$NAME"
 
 # General tools
-PACKAGES="wget iperf unzip telnet xterm curl ethtool man nano"
+PACKAGES="wget tar iperf xterm curl ethtool man "
 
 CUSTOMIZESCRIPT=$(cat <<EOF
 
@@ -54,57 +55,11 @@ sed -i -e '\$aPATH=\$PATH:~/bin' /root/.bashrc
 # Allow root login by ssh
 sed -i -e 's/^PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
 
-# Install ONOS
-apt-get install git-core -y
-cd; mkdir Downloads Applications
-cd Downloads
-wget http://archive.apache.org/dist/karaf/3.0.5/apache-karaf-3.0.5.tar.gz
-wget http://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
-tar -zxvf apache-karaf-3.0.5.tar.gz -C ../Applications/
-tar -zxvf apache-maven-3.3.9-bin.tar.gz -C ../Applications/
-apt-get install software-properties-common -y
-add-apt-repository ppa:webupd8team/java -y
-apt-get update
-echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | sudo debconf-set-selections
-apt-get install oracle-java8-installer oracle-java8-set-default -y
-cd; git clone https://gerrit.onosproject.org/onos
-cd onos
-git checkout onos-1.6
-echo '' >> ~/.bashrc
-echo 'export ONOS_ROOT=~/onos' >> ~/.bashrc
-export ONOS_ROOT=~/onos
-echo 'source ~/onos/tools/dev/bash_profile' >> ~/.bashrc
-source ~/onos/tools/dev/bash_profile
-echo 'JAVA_HOME=/usr/lib/jvm/java-8-oracle' >> ~/.bashrc
-export JAVA_HOME=/usr/lib/jvm/java-8-oracle
-mvn clean install -DskipTests
+#Update
+apt-get update -y
 
-# Install Quagga
-apt-get install -y patch build-essential gawk texinfo libreadline-dev
-echo '' >> ~/.bashrc
-echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib' >> ~/.bashrc
-cd; mkdir quagga; cd quagga
-wget http://download.savannah.gnu.org/releases/quagga/quagga-0.99.23.tar.gz
-wget https://wiki.opencord.org/download/attachments/1278529/fpm-remote.diff
-tar -xzvf quagga-0.99.23.tar.gz
-cd quagga-0.99.23
-patch -p1 < ../fpm-remote.diff
-./configure --enable-fpm
-make
-make install
-groupadd quagga
-useradd -g quagga -G root -s /bin/false quagga
-mkdir /var/log/quagga
-chown quagga:quagga /var/log/quagga
-
-# Install Open vSwitch (2.5.1)
-cd; mkdir openvswitch; cd openvswitch
-wget http://openvswitch.org/releases/openvswitch-2.5.1.tar.gz
-tar -xvf openvswitch-2.5.1.tar.gz
-cd openvswitch-2.5.1
-DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential graphviz autoconf automake debhelper dh-autoreconf libssl-dev libtool python-all python-qt4 python-twisted-conch python-zopeinterface dkms racoon module-assistant python-twisted-web uuid-runtime linux-headers-4.4.0-38-generic
-DEB_BUILD_OPTIONS='nocheck' fakeroot debian/rules binary
-dpkg -i ../openvswitch-datapath-dkms_* ../openvswitch-switch_* ../openvswitch-common_*
+#Install packages
+apt-get install -y vlan build-essential ant maven python-dev default-jre dnsmasq openjdk-8-jdk isc-dhcp-server isc-dhcp-relay
 
 EOF
 )
