@@ -1,4 +1,5 @@
 #!/bin/bash
+cd /root/
 
 #Check if configuration is done
 if ovs-vsctl list-br | grep br0 > /dev/null; then
@@ -60,6 +61,7 @@ ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock \
 
 echo '--------------->Installing module VLAN'
 apt-get install -y vlan
+sed -i 's/^# exit 0/exit 0/g' /etc/networking/if-pre-up.d/swconfig
 
 echo '--------------->Enable forwarding'
 sed -i 's/^#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
