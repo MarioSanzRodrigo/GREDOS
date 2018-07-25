@@ -1189,11 +1189,12 @@ openstack network create --share --provider-physical-network vlan --provider-net
 	#VLANIDs variables - Change them to change the Residential network scenario - Dont forget to run the config_banana.py script in bananapi
 	TVlanID=11
 	OFVlanID=201
+
+	# Not used now because it was impossible to automatize the deployment with OSM
 	X_gw_port=11
 	X_gw_mac=1a:1a:1a:1a:1a:1a
 	X_default_user_mac=68:eb:ae:68:eb:a1
 	###############################
-	echo $TVlanID
         # Create vlan based networks and subnetworks
         openstack network create --share --provider-physical-network vlan --provider-network-type vlan --provider-segment $TVlanID vlan$TVlanID
         openstack network create --share --provider-physical-network vlan --provider-network-type vlan --provider-segment $OFVlanID vlan$OFVlanID
