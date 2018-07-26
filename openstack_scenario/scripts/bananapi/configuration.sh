@@ -80,6 +80,8 @@ cp /root/GREDOS/openstack_scenario/scripts/bananapi/controllers.sh /root/control
 cp /root/GREDOS/openstack_scenario/scripts/bananapi/config_bananapi.py /root/config_bananapi.py
 cp /root/GREDOS/openstack_scenario/scripts/bananapi/base.rc.local /etc/base.rc.local
 chmod +x /root/controllers.sh config_bananapi.py
+cd /root/
+git clone https://github.com/noxrepo/pox
 
 echo '--------------->Rebooting system'
 sleep 3

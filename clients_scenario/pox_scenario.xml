@@ -39,7 +39,7 @@ SPAIN
  
   <!-- CLIENTS --> 
   <vm name="client1" type="lxc" subtype="" os="" arch="x86_64">
-    <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
+    <filesystem type="cow">filesystems/rootfs_lxc_ubuntu64-rootfs_lxc64_GREDOS</filesystem>
     <mem>512M</mem>
     <if id="1" net="s1" >
       <mac>68:eb:ae:68:eb:a1</mac>
@@ -55,7 +55,7 @@ SPAIN
   </vm>
 
   <vm name="client2" type="lxc" subtype="" os="" arch="x86_64">
-    <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
+    <filesystem type="cow">filesystems/rootfs_lxc_ubuntu64-rootfs_lxc64_GREDOS</filesystem>
     <mem>512M</mem>
     <if id="1" net="s1" >
       <mac>68:eb:ae:68:eb:a2</mac>
@@ -71,7 +71,7 @@ SPAIN
   </vm>
 
   <vm name="client3" type="lxc" subtype="" os="" arch="x86_64">
-    <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
+    <filesystem type="cow">filesystems/rootfs_lxc_ubuntu64-rootfs_lxc64_GREDOS</filesystem>
     <mem>512M</mem>
     <if id="1" net="s1" >
       <mac>68:eb:ae:68:eb:a3</mac>
@@ -88,7 +88,7 @@ SPAIN
 
   <!-- CLOUD -->
   <vm name="cloud" type="lxc" subtype="" os="" arch="x86_64">
-    <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
+    <filesystem type="cow">filesystems/rootfs_lxc_ubuntu64-rootfs_lxc64_GREDOS</filesystem>
    <if id="2" net="s3" >
       <mac>14:fe:b5:14:fe:b3</mac>
     </if>
@@ -102,10 +102,6 @@ SPAIN
     <!-- Create VLANs 10 and 200 -->
     <filetree seq="on_boot" root="/etc/network/">conf/SubInterfaces/cloud/interfaces</filetree>
     <exec seq="start-all" type="verbatim" ostype="system">
-       	<!-- Installed in filesystem:
-	apt-get update -y
-	apt-get install -y vlan build-essential ant maven python-dev default-jre dnsmasq openjdk-8-jdk
- 	-->
  	ifup vlan10;
 	ifup vlan200;
 	iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
@@ -118,7 +114,7 @@ SPAIN
 
   <!-- DHCP -->
   <vm name="dhcp" type="lxc" subtype="" os="" arch="x86_64">
-    <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
+    <filesystem type="cow">filesystems/rootfs_lxc_ubuntu64-rootfs_lxc64_GREDOS</filesystem>
 <if id="2" net="s3" >
       <mac>14:fe:b5:14:fe:c4</mac>
     </if>
@@ -129,10 +125,6 @@ SPAIN
     <!-- Create DHCP configuration -->
     <filetree seq="on_boot" root="/tmp/dnsmasq.conf">conf/DHCPServer/dnsmasq.conf</filetree>
     <exec seq="start-all" type="verbatim" ostype="system">
-        <!-- Installed in filesystem:
-	apt-get update -y
-	apt-get install -y vlan build-essential ant maven python-dev default-jre dnsmasq openjdk-8-jdk
- 	-->
 	less /tmp/dnsmasq.conf >> /etc/dnsmasq.conf	
 	rm /tmp/dnsmasq.conf
 	ifup vlan10

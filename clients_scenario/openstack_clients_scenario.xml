@@ -37,7 +37,7 @@ SPAIN
  
   <!-- END DEVICE 1 -->
   <vm name="client1" type="lxc" subtype="" os="" arch="x86_64">
-    <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
+    <filesystem type="cow">filesystems/rootfs_lxc_ubuntu64-rootfs_lxc64_GREDOS</filesystem>
     <mem>512M</mem>
     <if id="1" net="BananaPi" >
       <mac>68:eb:ae:68:eb:a1</mac>
@@ -49,7 +49,7 @@ SPAIN
 
   <!-- END DEVICE 2 -->
   <vm name="client2" type="lxc" subtype="" os="" arch="x86_64">
-    <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
+    <filesystem type="cow">filesystems/rootfs_lxc_ubuntu64-rootfs_lxc64_GREDOS</filesystem>
     <mem>512M</mem>
     <if id="1" net="BananaPi" >
       <mac>68:eb:ae:68:eb:a2</mac>
@@ -61,7 +61,7 @@ SPAIN
 
   <!-- END DEVICE 3 -->
   <vm name="client3" type="lxc" subtype="" os="" arch="x86_64">
-    <filesystem type="cow">filesystems/rootfs_lxc64_sdn</filesystem>
+    <filesystem type="cow">filesystems/rootfs_lxc_ubuntu64-rootfs_lxc64_GREDOS</filesystem>
     <mem>512M</mem>
     <if id="1" net="BananaPi" >
       <mac>68:eb:ae:68:eb:a3</mac>

@@ -36,13 +36,13 @@
 #
 # Configuration
 #
-NAME=rootfs_lxc64_sdn
+NAME=rootfs_lxc64_GREDOS
 BASEROOTFSNAME=vnx_rootfs_lxc_ubuntu64-16.04-v025
 ROOTFSNAME=$BASEROOTFSNAME-$NAME
 ROOTFSLINKNAME="rootfs_lxc_ubuntu64-$NAME"
 
 # General tools
-PACKAGES="wget tar iperf xterm curl ethtool man "
+PACKAGES="wget tar iperf xterm curl ethtool man iptables "
 
 CUSTOMIZESCRIPT=$(cat <<EOF
 
@@ -59,7 +59,14 @@ sed -i -e 's/^PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
 apt-get update -y
 
 #Install packages
+apt-get install -y git
 apt-get install -y vlan build-essential ant maven python-dev default-jre dnsmasq openjdk-8-jdk isc-dhcp-server isc-dhcp-relay
+apt-get install -y python-pip
+pip install requests
+
+#Download Pox controller
+cd /root
+git clone https://github.com/noxrepo/pox
 
 EOF
 )
