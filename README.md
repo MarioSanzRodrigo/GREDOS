@@ -36,6 +36,10 @@ These scenarios deploy residential network architecture based on SDN and NFV.The
    - [Scenario 3: Floodlight as SDN controller and Banana Pi as Residential Gateway](https://github.com/carlosv5/GREDOS/wiki/floodlight_scenario): this scenario deploy clients and cloud side except from the Banana Pi (physical). Uses the GREDOS project's network application in Floodlight as SDN controller.      
  - [Scenario 4: OpenStack as ISP Cloud](https://github.com/carlosv5/GREDOS/wiki/openstack_gredos): this scenario deploy cloud and client sides except from the Banana Pi (physical). Cloud side is deployed with OpenStack.
  
+ When you destroy a scenario, be carefull it destroys the ovs too. You can check it with `ovs-vsctl show`. If there are OVSs of the scenarios and there is not a scenario created, delete them with `ovs-vsctl del-br NameOVS`.
+ 
+ In order to have connection to Internet, you have to configure NAT in the host. You can do it with the VNX command vnx_configure_nat. In the first three scenarios do: `vnx_configure_nat Inet NameInterfaceInternet` and in the OpenStack's scenario: `vnx_configure_nat ExtNet NameInterfaceInternet`
+ 
  ## BananaPi
 You need to understand the Banana Pi's configuration in order to deploy the scenarios 1,3 and 4. 
 
