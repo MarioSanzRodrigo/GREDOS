@@ -63,6 +63,7 @@ apt-get install -y git
 apt-get install -y vlan build-essential ant maven python-dev default-jre dnsmasq openjdk-8-jdk isc-dhcp-server isc-dhcp-relay
 apt-get install -y python-pip
 pip install requests
+pip install Flask
 
 #Download Pox controller
 cd /root
