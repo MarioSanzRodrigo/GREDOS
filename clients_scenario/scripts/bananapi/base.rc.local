@@ -1,7 +1,6 @@
 #!/bin/sh -e
 #exit 0
 loadkeys es
-/etc/init.d/dnsmasq stop
 /usr/local/share/openvswitch/scripts/ovs-ctl start
 
 echo 1 > /proc/sys/net/ipv4/ip_forward
@@ -28,7 +27,7 @@ ifconfig br0 br0IP/24 up
 route add default gw gwIP
 
 #Controller bk
-/root/pox/pox.py  pox.forwarding.l2_learning openflow.of_01 --address=br0IP --port=6633 &
+/usr/local/bin/python2.7 /root/pox/pox.py  pox.forwarding.l2_learning openflow.of_01 --address=br0IP --port=6633 &
 
 #Hostapd
 service hostapd stop

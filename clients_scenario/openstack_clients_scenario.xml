@@ -45,6 +45,9 @@ SPAIN
     <exec seq="on_boot" type="verbatim" ostype="system">
        ifconfig eth1 down  	
     </exec>
+    <exec seq="up-c1" type="verbatim" ostype="system">
+        ifconfig eth1 up
+    </exec>
   </vm>
 
   <!-- END DEVICE 2 -->
@@ -57,6 +60,9 @@ SPAIN
     <exec seq="on_boot" type="verbatim" ostype="system">
        ifconfig eth1 down  	
     </exec>
+    <exec seq="up-c2" type="verbatim" ostype="system">
+        ifconfig eth1 up
+    </exec>
   </vm>
 
   <!-- END DEVICE 3 -->
@@ -68,6 +74,9 @@ SPAIN
     </if>
     <exec seq="on_boot" type="verbatim" ostype="system">
        ifconfig eth1 down  	
+    </exec>
+    <exec seq="up-c3" type="verbatim" ostype="system">
+        ifconfig eth1 up
     </exec>
   </vm>
 

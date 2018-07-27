@@ -20,7 +20,7 @@ ping -c 3 $controller_ip  > /dev/null
         #echo Conecta a Fl
         vconfig rem eth1.$TVlanID
         /usr/local/bin/ovs-vsctl set-controller br0 tcp:$controller_ip:6653
-        /usr/local/bin/ovs-vsctl add-del br0 eth1.$TVlanID
+        /usr/local/bin/ovs-vsctl del-port br0 eth1.$TVlanID
       fi
     fi
   else
